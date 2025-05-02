@@ -13,7 +13,7 @@ import rongsokan.indah.constants.TextConstant;
 public class OpenAPIConfig {
 
     @Autowired
-    TextConstant textConstant;
+    private TextConstant textConstant;
 
     @Bean
     OpenAPI openAPI() {
