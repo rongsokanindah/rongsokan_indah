@@ -1,5 +1,6 @@
 package rongsokan.indah.configs;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,11 +12,14 @@ import rongsokan.indah.constants.TextConstant;
 @Configuration
 public class OpenAPIConfig {
 
+    @Autowired
+    TextConstant textConstant;
+
     @Bean
     OpenAPI openAPI() {
         return new OpenAPI().info(
-            new Info().title(TextConstant.TITLE).description(TextConstant.DESCRIPTION)
-                .contact(new Contact().name(TextConstant.EMAIL).email(TextConstant.EMAIL))
+            new Info().title(textConstant.getTitle()).description(textConstant.getDescription())
+                .contact(new Contact().name(textConstant.getEmail()).email(textConstant.getEmail()))
         );
     }
 }
