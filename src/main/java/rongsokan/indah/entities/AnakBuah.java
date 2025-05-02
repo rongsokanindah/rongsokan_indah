@@ -12,18 +12,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import rongsokan.indah.constants.MessageConstant;
 
 @Data
 @Entity
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class AnakBuah {
 
     @Id
@@ -35,9 +28,9 @@ public class AnakBuah {
     private String nama;
 
     @NotBlank
+    @PositiveOrZero
     @Column(length = 20, nullable = false)
-    @Pattern(regexp = "^\\+?\\d{8,20}$", message = MessageConstant.INVALID_WHATSAPP_NUMBER)
-    private String nomorWhatsapp;
+    private String nomorWhatsApp;
 
     @CreationTimestamp
     @Column(updatable = false)

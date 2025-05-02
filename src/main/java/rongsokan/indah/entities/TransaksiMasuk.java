@@ -14,16 +14,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @Entity
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class TransaksiMasuk {
 
     @Id
@@ -41,10 +36,12 @@ public class TransaksiMasuk {
     private Barang barang;
 
     @NotBlank
+    @PositiveOrZero
     @Column(precision = 10, scale = 2, nullable = false)
     private BigDecimal beratKg;
 
     @NotBlank
+    @PositiveOrZero
     @Column(precision = 10, scale = 2, nullable = false)
     private BigDecimal totalHarga;
 

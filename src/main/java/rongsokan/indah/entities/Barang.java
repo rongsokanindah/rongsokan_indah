@@ -14,17 +14,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import rongsokan.indah.constants.MessageConstant;
 
 @Data
 @Entity
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class Barang {
 
     @Id
@@ -36,8 +29,8 @@ public class Barang {
     private String namaBarang;
 
     @NotBlank
+    @PositiveOrZero
     @Column(precision = 10, scale = 2, nullable = false)
-    @PositiveOrZero(message = MessageConstant.INVALID_PRICE_PER_KG)
     private BigDecimal hargaPerKg;
 
     @CreationTimestamp
