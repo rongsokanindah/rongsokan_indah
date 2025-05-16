@@ -1,5 +1,6 @@
 package rongsokan.indah.configs;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,6 +15,9 @@ import rongsokan.indah.constants.SecurityConstant;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    @Autowired
+    private AuthFailureHandlerConfig authFailureHandlerConfig;
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
@@ -26,10 +30,10 @@ public class SecurityConfig {
             .sessionManagement(sessionManagement -> sessionManagement
             .maximumSessions(1).expiredUrl("/login?expired"))
 
-            // Configure form login and logout
+            // Configure form login
             .formLogin(formLogin -> formLogin
-            .defaultSuccessUrl("/home", true)
-            .failureUrl("/login?error=true")
+            .defaultSuccessUrl("/dashboard", true)
+            .failureHandler(authFailureHandlerConfig)
             .loginPage("/login")
             .permitAll())
 
@@ -38,6 +42,7 @@ public class SecurityConfig {
             .build();
     }
 
+    // Configure Password
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
