@@ -6,10 +6,10 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import rongsokan.indah.entities.User;
+import rongsokan.indah.entities.Pengguna;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, UUID> {
+public interface PenggunaRepository extends JpaRepository<Pengguna, UUID> {
 
-    Optional<User> findByUsername(String username);
+    Optional<Pengguna> findByUsername(String username);
 }
