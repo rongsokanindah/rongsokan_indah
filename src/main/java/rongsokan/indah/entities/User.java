@@ -39,7 +39,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @NotBlank
     @ManyToOne
     @JoinColumn(name = "anak_buah_id")
     private AnakBuah anakBuah;
