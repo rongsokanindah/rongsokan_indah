@@ -1,0 +1,41 @@
+/*~~ General ~~*/
+body{
+    overflow: hidden;
+}
+
+.form-control {
+    box-shadow: none !important;
+    border-width: 1.3px !important;
+}
+.form-control:focus {
+    box-shadow: none !important;
+    border-width: 1.3px !important;
+    border-color: #198754 !important;
+}
+
+/*~~ LOGIN ~~*/
+.login {
+    width: 25%;
+    transition: width 0.3s;
+}
+.login.show {
+    width: 100%;
+    overflow: hidden;
+    max-width: 400px;
+}
+
+.login img {
+    max-width: auto;
+    transition: max-width 0.3s;
+}
+.login.show img {
+    max-width: 130px;
+}
+
+.login form {
+    display: none;
+    transition: display 0.3;
+}
+.login.show form {
+    display: block;
+}
