@@ -8,12 +8,17 @@ import org.springframework.ui.Model;
 
 import jakarta.servlet.http.HttpServletRequest;
 import rongsokan.indah.constants.AttributeConstant;
+import rongsokan.indah.entities.Pengguna;
+import rongsokan.indah.repositories.PenggunaRepository;
 
 @Service
 public class PageService {
 
     @Autowired
     private AttributeConstant attribute;
+
+    @Autowired
+    private PenggunaRepository penggunaRepository;
 
     public String getLoginPage(HttpServletRequest request, Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -28,6 +33,16 @@ public class PageService {
                 request.getSession().removeAttribute(attribute.getLoginError());
             }
             return "pages/login";
+        }
+    }
+
+    public void getDataLogin(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if(auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
+            Pengguna pengguna = penggunaRepository.findByUsername(auth.getName()).get();
+
+            model.addAttribute(attribute.getPengguna(), pengguna);
         }
     }
 }
