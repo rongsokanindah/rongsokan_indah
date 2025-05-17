@@ -23,4 +23,9 @@ public class PageController {
     public String loginPage(HttpServletRequest request, Model model) {
         return pageService.getLoginPage(request, model);
     }
+
+    @GetMapping("/dashboard")
+    public String dashboardPage() {
+        return "pages/dashboard";
+    }
 }

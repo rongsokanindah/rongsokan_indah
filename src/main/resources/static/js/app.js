@@ -35,6 +35,17 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       });
     }
+
+    //~Dashboard~//
+    const toggleBtn = document.querySelector(".toggle-btn i");
+    const sidebar = document.querySelector(".sidebar");
+    const topbar = document.querySelector(".topbar");
+
+    //Sidebar Toggle
+    toggleBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("collapsed");
+      topbar.classList.toggle("collapsed");
+    });
 });
 
 function hasQueryParam(param) {
