@@ -41,10 +41,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const sidebar = document.querySelector(".sidebar");
     const topbar = document.querySelector(".topbar");
 
+    const toggleProfile = document.querySelector(".toggle-profile");
+    const profile = document.querySelector(".profile");
+
     //Sidebar Toggle
     toggleBtn.addEventListener("click", () => {
       sidebar.classList.toggle("collapsed");
       topbar.classList.toggle("collapsed");
+    });
+
+    //Profile Toggle
+    toggleProfile.addEventListener("click", () => {
+      profile.classList.toggle("show");
     });
 });
 

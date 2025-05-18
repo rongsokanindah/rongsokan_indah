@@ -89,16 +89,22 @@ body{
 .topbar.collapsed {
     margin-left: 70px;
 }
-
-.toggle-profile:hover {
+.topbar .toggle-profile:hover {
     cursor: pointer;
     background-color: #F2F2F2FF;
 }
-
-.profile a {
+.topbar .profile {
+    transform: scale(0);
+    transform-origin: top right;
+    transition: transform 0.3s ease;
+}
+.topbar .profile.show {
+    transform: scale(1);
+}
+.topbar .profile a {
     color: #6C757DFF;
 }
-.profile a:hover {
+.topbar .profile a:hover {
     color: #000000FF;
     background-color: #F2F2F2FF;
 }
