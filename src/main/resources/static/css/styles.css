@@ -1,6 +1,7 @@
 /*~~ General ~~*/
 body{
     overflow: hidden;
+    font-family: "Arial", sans-serif;
 }
 
 .form-control {
@@ -77,6 +78,7 @@ body{
     transform: scaleX(-1);
 }
 .sidebar .toggle-btn i:hover {
+    cursor: pointer;
     background-color: #0A6C22FF;
 }
 
@@ -86,4 +88,17 @@ body{
 }
 .topbar.collapsed {
     margin-left: 70px;
+}
+
+.toggle-profile:hover {
+    cursor: pointer;
+    background-color: #F2F2F2FF;
+}
+
+.profile a {
+    color: #6C757DFF;
+}
+.profile a:hover {
+    color: #000000FF;
+    background-color: #F2F2F2FF;
 }
