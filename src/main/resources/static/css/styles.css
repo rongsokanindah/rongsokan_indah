@@ -1,6 +1,9 @@
 /*~~ General ~~*/
 body{
+    display: flex;
     overflow: hidden;
+    min-height: 100vh;
+    flex-direction: column;
     font-family: "Arial", sans-serif;
 }
 
@@ -107,4 +110,12 @@ body{
 .topbar .profile a:hover {
     color: #000000FF;
     background-color: #F2F2F2FF;
+}
+
+.footer {
+    margin-left: 250px;
+    transition: margin-left 0.3s;
+}
+.footer.collapsed {
+    margin-left: 70px;
 }

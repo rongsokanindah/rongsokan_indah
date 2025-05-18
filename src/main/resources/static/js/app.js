@@ -40,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const toggleBtn = document.querySelector(".toggle-btn i");
     const sidebar = document.querySelector(".sidebar");
     const topbar = document.querySelector(".topbar");
+    const footer = document.querySelector(".footer");
 
     const toggleProfile = document.querySelector(".toggle-profile");
     const profile = document.querySelector(".profile");
@@ -48,12 +49,16 @@ document.addEventListener("DOMContentLoaded", () => {
     toggleBtn.addEventListener("click", () => {
       sidebar.classList.toggle("collapsed");
       topbar.classList.toggle("collapsed");
+      footer.classList.toggle("collapsed");
     });
 
     //Profile Toggle
     toggleProfile.addEventListener("click", () => {
       profile.classList.toggle("show");
     });
+
+    //Footer
+    footer.querySelector(".year").textContent = new Date().getFullYear();
 });
 
 function hasQueryParam(param) {
