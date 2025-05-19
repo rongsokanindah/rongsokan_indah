@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
-    //~Initialize variable~//
+    //~ Initialize ~//
     const currentUrl = window.location.pathname;
 
-    //~Splash Screen~//
+    //~~~~~ Splash Screen ~~~~~~~~~~~~~~~//
     if (currentUrl === "/") {
       //Splash to redirect
       setTimeout(() => {
@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 300);
     }
 
-    //~Login~//
+    //~~~~~ Login ~~~~~~~~~~~~~~~//
     if (currentUrl === "/login") {
       //Initialize document
       const login = document.querySelector(".login");
@@ -36,32 +36,47 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    //~Dashboard~//
-    const toggleBtn = document.querySelector(".toggle-btn i");
-    const sidebar = document.querySelector(".sidebar");
-    const topbar = document.querySelector(".topbar");
-    const footer = document.querySelector(".footer");
+    //~~~~~ After Login Succesffully ~~~~~~~~~~~~~~~//
+    if(currentUrl !== "/" && currentUrl !== "/login") {
+      //Initialize document
+      const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+      const csrfHeader = document.querySelector("meta[name='csrf-header']").getAttribute("content");
 
-    const toggleProfile = document.querySelector(".toggle-profile");
-    const profile = document.querySelector(".profile");
+      const toggleSidebar = document.querySelector(".toggle-btn i");
+      const sidebar = document.querySelector(".sidebar");
+      const topbar = document.querySelector(".topbar");
+      const footer = document.querySelector(".footer");
 
-    //Sidebar Toggle
-    toggleBtn.addEventListener("click", () => {
-      sidebar.classList.toggle("collapsed");
-      topbar.classList.toggle("collapsed");
-      footer.classList.toggle("collapsed");
-    });
+      const toggleProfile = document.querySelector(".toggle-profile");
+      const profile = document.querySelector(".profile");
 
-    //Profile Toggle
-    toggleProfile.addEventListener("click", () => {
-      profile.classList.toggle("show");
-    });
+      //Sidebar Toggle
+      toggleSidebar.addEventListener("click", () => {
+        sidebar.classList.toggle("collapsed");
+        topbar.classList.toggle("collapsed");
+        footer.classList.toggle("collapsed");
+      });
 
-    //Footer
-    footer.querySelector(".year").textContent = new Date().getFullYear();
+      //Profile Toggle
+      toggleProfile.addEventListener("click", () => {
+        profile.classList.toggle("show");
+      });
+
+      //Footer
+      footer.querySelector(".year").textContent = new Date().getFullYear();
+
+      //~~~~~ logout ~~~~~~~~~~~~~~~//
+      const logoutBtn = profile.querySelector("a[href='/logout'");
+
+      logoutBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+
+        fetch("/logout", {
+          method: "POST",
+          headers: {[csrfHeader]: csrfToken}
+        }).then(() => {
+          window.location.href = "/";
+        });
+      });
+    }
 });
-
-function hasQueryParam(param) {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.has(param);
-}
