@@ -50,6 +50,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const toggleProfile = document.querySelector(".toggle-profile");
       const profile = document.querySelector(".profile");
 
+      //Sidebar Active
+      sidebar.querySelectorAll(".menu a").forEach((menu) => {
+        menu.classList.remove("sidebar-active");
+
+        if(menu.getAttribute("href") === currentUrl) {
+          menu.classList.add("sidebar-active");
+        }
+      });
+
       //Sidebar Toggle
       toggleSidebar.addEventListener("click", () => {
         sidebar.classList.toggle("collapsed");
