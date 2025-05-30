@@ -1,0 +1,10 @@
+<th:block th:fragment="delete(title, data)">
+    <button
+        th:title="${title}"
+        data-bs-toggle="modal"
+        data-bs-backdrop="static"
+        data-bs-target="#deleteModal"
+        class="btn btn-sm btn-outline-danger">
+        <i class="bi bi-trash"></i>
+    </button>
+</th:block>

@@ -1,10 +1,18 @@
 /*~~ General ~~*/
-body{
+body {
     display: flex;
-    overflow: hidden;
     min-height: 100vh;
     flex-direction: column;
     font-family: "Arial", sans-serif;
+}
+
+main {
+    flex: 1;
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #F2F2F2FF #FFFFFFFF;
 }
 
 .form-control {
@@ -15,6 +23,10 @@ body{
     box-shadow: none !important;
     border-width: 1.3px !important;
     border-color: #198754 !important;
+}
+
+.tooltip-inner {
+    font-size: 12px;
 }
 
 /*~~ LOGIN ~~*/
@@ -110,6 +122,29 @@ body{
 .topbar .profile a:hover {
     color: #000000FF;
     background-color: #F2F2F2FF;
+}
+
+.content {
+    margin-left: 250px;
+    transition: margin-left 0.3s;
+}
+.content.collapsed {
+    margin-left: 70px;
+}
+.content .search {
+    max-width: 250px;
+}
+.content .no-data {
+    height: 50vh;
+}
+.content .btn-add {
+    width: 60px;
+    height: 60px;
+    transition: width 0.3s, height 0.3s;
+}
+.content .btn-add:hover {
+    width: 65px;
+    height: 65px;
 }
 
 .footer {

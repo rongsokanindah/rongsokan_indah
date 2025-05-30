@@ -5,6 +5,11 @@
     <body>
         <div th:replace="~{partials/sidebar::sidebar}"></div>
         <div th:replace="~{partials/topbar::topbar}"></div>
+
+        <main th:switch="${path}">
+            <div th:case="'/barang'" th:insert="~{fragments/barang::barang}"></div>
+        </main>
+
         <div th:replace="~{partials/footer::footer}"></div>
     </body>
 </html>

@@ -9,4 +9,6 @@ import lombok.Getter;
 public class AttributeConstant {
     private final String loginError = "LOGIN_ERROR";
     private final String pengguna = "pengguna";
+    private final String barang = "dataBarang";
+    private final String path = "path";
 }

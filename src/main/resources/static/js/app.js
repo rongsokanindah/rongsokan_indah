@@ -44,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const toggleSidebar = document.querySelector(".toggle-btn i");
       const sidebar = document.querySelector(".sidebar");
+      const content = document.querySelector(".content");
       const topbar = document.querySelector(".topbar");
       const footer = document.querySelector(".footer");
 
@@ -62,6 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
       //Sidebar Toggle
       toggleSidebar.addEventListener("click", () => {
         sidebar.classList.toggle("collapsed");
+        content.classList.toggle("collapsed");
         topbar.classList.toggle("collapsed");
         footer.classList.toggle("collapsed");
       });
@@ -86,6 +88,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }).then(() => {
           window.location.href = "/";
         });
+      });
+
+      //Show Tooltip
+      document.querySelectorAll("[data-bs-toggle='modal']").forEach((tooltip) => {
+        new bootstrap.Tooltip(tooltip);
       });
     }
 });

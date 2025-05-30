@@ -1,0 +1,9 @@
+<div class="row" th:fragment="title(icon, title, description)">
+    <div class="col d-flex">
+        <i class="bi text-success fs-2" th:classappend="${icon}"></i>
+        <div class="ms-2">
+            <h5 class="m-0 text-dark" th:text="${title}"></h5>
+            <span class="text-muted small" th:text="${description}"></span>
+        </div>
+    </div>
+</div>

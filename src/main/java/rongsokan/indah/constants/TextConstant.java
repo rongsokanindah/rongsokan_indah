@@ -25,4 +25,17 @@ public class TextConstant {
 
     private final String profil = "Profil";
     private final String logout = "Logout";
+
+    private final String dataBarang = "Data Barang";
+    private final String cariBarang = "Cari Barang";
+    private final String belumAdaData = "Belum ada data yang tersedia.";
+    private final String deskripsiBarang = "Daftar semua barang beserta harga per kilogramnya.";
+
+    private final String no = "No.";
+    private final String namaBarang = "Nama Barang";
+    private final String hargaPerKg = "Harga per Kg";
+
+    private final String aksi = "Aksi";
+    private final String edit = "Edit";
+    private final String hapus = "Hapus";
 }
