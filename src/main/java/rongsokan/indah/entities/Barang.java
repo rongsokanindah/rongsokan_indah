@@ -28,7 +28,6 @@ public class Barang {
     @Column(length = 100, nullable = false)
     private String namaBarang;
 
-    @NotBlank
     @PositiveOrZero
     @Column(precision = 10, scale = 2, nullable = false)
     private BigDecimal hargaPerKg;
