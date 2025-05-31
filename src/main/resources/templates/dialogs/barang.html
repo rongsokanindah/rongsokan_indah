@@ -1,0 +1,33 @@
+<div id="barang" class="modal fade" data-bs-backdrop="static" th:fragment="barang">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div th:replace="~{components/modal-header::modal-header('bi-boxes')}"></div>
+
+            <div class="modal-body">
+                <form novalidate>
+                    <div class="mb-3">
+                        <label for="namaBarang" class="form-label fs-6">
+                            <span th:text="${@textConstant.namaBarang}"></span>
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input id="namaBarang" type="text" class="form-control form-control-sm" required minlength="3"/>
+                        <div class="invalid-feedback small" th:text="${@textConstant.wajibMin3Karakter}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="hargaPerKg" class="form-label fs-6">
+                            <span th:text="${@textConstant.hargaPerKg}"></span>
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input id="hargaPerKg" type="number" class="form-control form-control-sm" required min="0"/>
+                        <div class="invalid-feedback small" th:text="${@textConstant.wajibTidakNegatif}"></div>
+                    </div>
+                </form>
+            </div>
+
+            <div th:replace="~{components/modal-footer::modal-footer(${@textConstant.simpan}, 'btn-success')}"></div>
+        </div>
+    </div>
+</div>

@@ -1,8 +1,8 @@
-<th:block th:fragment="add">
+<th:block th:fragment="add(target, title)">
     <button
         data-bs-toggle="modal"
-        data-bs-backdrop="static"
-        data-bs-target="#addModal"
+        th:data-bs-title="${title}"
+        th:data-bs-target="${target}"
         class="btn btn-lg btn-success position-fixed bottom-0 end-0 m-5 rounded-circle border-2 border-light shadow-lg btn-add">
         <i class="bi bi-plus-circle fs-4"></i>
     </button>

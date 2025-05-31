@@ -23,13 +23,19 @@
                 <td th:text="${barang.namaBarang}"></td>
                 <td th:text="${'Rp' + #numbers.formatInteger(barang.hargaPerKg, 0, 'POINT')}"></td>
                 <td th:if="${pengguna.role.name() == 'ADMIN'}">
-                    <button th:replace="~{components/btn-edit::edit(${@textConstant.edit}, '')}"></button>
-                    <button th:replace="~{components/btn-delete::delete(${@textConstant.hapus}, '')}"></button>
+                    <button th:replace="~{components/btn-edit::edit('#barang', ${@textConstant.editBarang}, '')}"></button>
+                    <button th:replace="~{components/btn-delete::delete(${@textConstant.hapusBarang}, '')}"></button>
                 </td>
             </tbody>
         </table>
     </div>
 
     <div th:if="${pengguna.role.name() == 'ADMIN'}"
-         th:insert="~{components/btn-add::add}"></div>
+         th:insert="~{components/btn-add::add('#barang', ${@textConstant.tambahBarang})}"></div>
+
+    <div th:if="${pengguna.role.name() == 'ADMIN'}"
+         th:insert="~{dialogs/barang::barang}"></div>
+
+    <div th:if="${pengguna.role.name() == 'ADMIN'}"
+         th:insert="~{dialogs/confirmation::confirmation}"></div>
 </div>

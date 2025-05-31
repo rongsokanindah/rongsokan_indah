@@ -1,9 +1,8 @@
-<th:block th:fragment="edit(title, data)">
+<th:block th:fragment="edit(target, title, data)">
     <button
-        th:title="${title}"
         data-bs-toggle="modal"
-        data-bs-backdrop="static"
-        data-bs-target="#editModal"
+        th:data-bs-title="${title}"
+        th:data-bs-target="${target}"
         class="btn btn-sm btn-outline-warning">
         <i class="bi bi-pencil"></i>
     </button>

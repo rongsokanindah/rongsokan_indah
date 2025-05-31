@@ -1,0 +1,14 @@
+<div id="delete" class="modal fade" data-bs-backdrop="static" th:fragment="confirmation">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div th:replace="~{components/modal-header::modal-header('bi-trash text-danger')}"></div>
+
+            <div class="modal-body">
+                <span th:text="${@textConstant.confirmationDelete}"></span>
+                <span class="fw-bold delete-data"></span>?
+            </div>
+
+            <div th:replace="~{components/modal-footer::modal-footer(${@textConstant.hapus}, 'btn-danger')}"></div>
+        </div>
+    </div>
+</div>

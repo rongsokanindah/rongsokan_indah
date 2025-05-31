@@ -36,6 +36,13 @@ public class TextConstant {
     private final String hargaPerKg = "Harga per Kg";
 
     private final String aksi = "Aksi";
-    private final String edit = "Edit";
     private final String hapus = "Hapus";
+    private final String simpan = "Simpan";
+    private final String editBarang = "Edit Barang";
+    private final String hapusBarang = "Hapus Barang";
+    private final String tambahBarang = "Tambah Barang";
+
+    private final String wajibMin3Karakter = "Wajib diisi minimal 3 karakter.";
+    private final String wajibTidakNegatif = "Wajib diisi dan tidak boleh negatif.";
+    private final String confirmationDelete = "Apakah Anda yakin ingin menghapus ini";
 }
