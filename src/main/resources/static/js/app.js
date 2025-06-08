@@ -199,6 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
               }).then((html) => {
                 content.innerHTML = html;
+                deleteBarang();
                 barang();
 
                 //Show Effect Changed
@@ -208,8 +209,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 targetRow.forEach((row) => {
                   if (row.dataset.id === targetID) {
-                    row.classList.add(edit ? "row-highlight" : "row-pop");
-                    setTimeout(() => row.className = "", 2000);
+                    row.classList.add(edit ? "row-edit-data" : "row-add-data");
+                    setTimeout(() => row.className = "", 1500);
                   }
                 });
               });
@@ -218,6 +219,95 @@ document.addEventListener("DOMContentLoaded", () => {
           } else {
             barangForm.classList.add("was-validated");
           }
+        }
+      }
+
+      deleteBarang();
+      function deleteBarang() {
+        //Initialize document
+        const confirmModal = document.getElementById("delete");
+        const buttonDelete = confirmModal.querySelector("button[type='submit'");
+
+        //Reset Modal Event
+        confirmModal.removeEventListener("show.bs.modal", handleShowModal);
+        confirmModal.addEventListener("show.bs.modal", handleShowModal);
+
+        let modalData = null;
+        let modalTitle = null;
+
+        function handleShowModal(event) {
+          const buttonShow = event.relatedTarget;
+          modalData = buttonShow.dataset.bsData;
+          modalTitle = buttonShow.dataset.bsTitle;
+
+          //Show Modal Title
+          confirmModal.querySelector(".modal-title").textContent = modalTitle;
+
+          //Reset Modal Confirmation
+          buttonDelete.querySelector(".spinner").classList.add("d-none");
+          confirmModal.querySelectorAll("button").forEach((button) => button.disabled = false);
+
+          //Confirmation Data to Delete
+          if (modalData) {
+            const barang = JSON.parse(modalData);
+            confirmModal.querySelector(".delete-data").textContent = barang.namaBarang;
+          }
+
+          //Reset Delete Event
+          buttonDelete.removeEventListener("click", handleDeleteClick);
+          buttonDelete.addEventListener("click", handleDeleteClick);
+        }
+
+        function handleDeleteClick(event) {
+          event.preventDefault();
+
+          //Disabled All Button and Show Loading
+          confirmModal.querySelectorAll("button").forEach((button) => button.disabled = true);
+          buttonDelete.querySelector(".spinner").classList.remove("d-none");
+
+          const data = JSON.parse(modalData);
+          const targetID = data.id;
+
+          //Delete Barang
+          fetch(`/api/barang/${targetID}`, {
+            method: "DELETE",
+            headers: {
+              [csrfHeader]: csrfToken,
+              "Content-Type": "application/json"
+            }
+          }).then((response) => {
+            if (response.ok) {
+
+              //Show Effect Deleted
+              const tableBody = content.querySelector("tbody");
+              const targetRow = tableBody.querySelectorAll("tr");
+
+              targetRow.forEach((row) => {
+                if (row.dataset.id === targetID) {
+                  row.classList.add("row-delete-data");
+
+                  //Reload Content
+                  setTimeout(() => {
+                    fetch("/barang", {
+                      method: "POST",
+                      headers: {
+                        [csrfHeader]: csrfToken
+                      }
+                    }).then((response) => {
+                      if (response.ok) {
+                        return response.text();
+                      }
+                    }).then((html) => {
+                      content.innerHTML = html;
+                      deleteBarang();
+                      barang();
+                    });
+                  }, 1000);
+                }
+              });
+            }
+            bootstrap.Modal.getInstance(confirmModal).hide();
+          });
         }
       }
     }

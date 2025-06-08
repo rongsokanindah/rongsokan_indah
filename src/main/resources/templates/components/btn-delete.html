@@ -3,6 +3,7 @@
         data-bs-toggle="modal"
         data-bs-target="#delete"
         th:data-bs-title="${title}"
+        th:data-bs-data="${@parse.toJSON(data)}"
         class="btn btn-sm btn-outline-danger">
         <i class="bi bi-trash"></i>
     </button>

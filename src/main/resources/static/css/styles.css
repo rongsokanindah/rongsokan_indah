@@ -146,11 +146,14 @@ main {
     width: 65px;
     height: 65px;
 }
-.content .row-pop td {
+.content .row-add-data td {
     animation: popEffect 1.5s ease;
 }
-.content .row-highlight td {
+.content .row-edit-data td {
     animation: fadeHighlight 1.5s ease;
+}
+.content .row-delete-data td {
+    animation: fadeOutHighlight 1.5s ease;
 }
 
 .footer {
@@ -176,7 +179,7 @@ main {
     100% {
         transform: scale(1);
         background-color: transparent;
-        border: 0px solid transparent;
+        border: 1px solid #F2F2F2FF;
     }
 }
 
@@ -190,6 +193,24 @@ main {
         border: 0.5px solid #FFC10780;
     }
     100% {
+        background-color: transparent;
+        border: 1px solid #F2F2F2FF;
+    }
+}
+
+@keyframes fadeOutHighlight {
+    0% {
+        opacity: 1;
+        background-color: #F8D7DAFF;
+        border: 1px solid #DC3545FF;
+    }
+    50% {
+        opacity: 0.5;
+        background-color: #F8D7DA80;
+        border: 0.5px solid #DC354580;
+    }
+    100% {
+        opacity: 0;
         background-color: transparent;
         border: 0px solid transparent;
     }

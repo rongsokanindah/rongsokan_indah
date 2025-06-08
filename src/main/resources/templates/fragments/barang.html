@@ -27,7 +27,7 @@
                         <td th:text="${'Rp' + #numbers.formatInteger(barang.hargaPerKg, 0, 'POINT')}"></td>
                         <td th:if="${pengguna.role.name() == 'ADMIN'}">
                             <button th:replace="~{components/btn-edit::edit('#barang', ${@textConstant.editBarang}, ${barang})}"></button>
-                            <button th:replace="~{components/btn-delete::delete(${@textConstant.hapusBarang}, '')}"></button>
+                            <button th:replace="~{components/btn-delete::delete(${@textConstant.hapusBarang}, ${barang})}"></button>
                         </td>
                     </tr>
                 </tbody>
