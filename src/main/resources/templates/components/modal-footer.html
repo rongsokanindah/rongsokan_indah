@@ -1,3 +1,6 @@
 <div class="modal-footer" th:fragment="modal-footer(title, button)">
-    <button type="submit" class="btn btn-sm" th:text="${title}" th:classappend="${button}"></button>
+    <button type="submit" class="btn btn-sm" th:classappend="${button}">
+        <span class="spinner-border spinner-border-sm d-none spinner"></span>
+        <span class="fs-6" th:text="${title}"></span>
+    </button>
 </div>

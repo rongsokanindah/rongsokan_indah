@@ -7,6 +7,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,10 +40,18 @@ public class PageController {
     }
 
     @GetMapping("/barang")
-    public String barangPage(
+    public String getBarangPage(
         Model model,
         @RequestParam(required = false, defaultValue = "") String cari,
         @PageableDefault(size = 5, sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
-        return pageService.getBarangPage(model, cari, pageable);
+            return pageService.getBarangPage(model, cari, pageable);
+    }
+
+    @PostMapping("/barang")
+    public String postBarangPage(
+        Model model,
+        @RequestParam(required = false, defaultValue = "") String cari,
+        @PageableDefault(size = 5, sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
+            return pageService.postBarangPage(model, cari, pageable);
     }
 }

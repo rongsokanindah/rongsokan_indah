@@ -3,6 +3,7 @@
         data-bs-toggle="modal"
         th:data-bs-title="${title}"
         th:data-bs-target="${target}"
+        th:data-bs-data="${@parse.toJSON(data)}"
         class="btn btn-sm btn-outline-warning">
         <i class="bi bi-pencil"></i>
     </button>

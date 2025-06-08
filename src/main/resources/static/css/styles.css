@@ -146,6 +146,12 @@ main {
     width: 65px;
     height: 65px;
 }
+.content .row-pop td {
+    animation: popEffect 1.5s ease;
+}
+.content .row-highlight td {
+    animation: fadeHighlight 1.5s ease;
+}
 
 .footer {
     margin-left: 250px;
@@ -153,4 +159,38 @@ main {
 }
 .footer.collapsed {
     margin-left: 70px;
+}
+
+/*~~ ANIMATION EFFECT ~~*/
+@keyframes popEffect {
+    0% {
+        transform: scale(1.10);
+        background-color: #D1E7DDFF;
+        border: 1px solid #198754FF;
+    }
+    50% {
+        transform: scale(1.05);
+        background-color: #D1E7DD80;
+        border: 0.5px solid #19875480;
+    }
+    100% {
+        transform: scale(1);
+        background-color: transparent;
+        border: 0px solid transparent;
+    }
+}
+
+@keyframes fadeHighlight {
+    0% {
+        background-color: #FFF3CDFF;
+        border: 1px solid #FFC107FF;
+    }
+    50% {
+        background-color: #FFF3CD80;
+        border: 0.5px solid #FFC10780;
+    }
+    100% {
+        background-color: transparent;
+        border: 0px solid transparent;
+    }
 }

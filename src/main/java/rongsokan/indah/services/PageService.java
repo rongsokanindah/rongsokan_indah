@@ -30,12 +30,12 @@ public class PageService {
     public String getLoginPage(HttpServletRequest request, Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        if(auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
+        if (auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
             return "redirect:/dashboard";
         } else {
             String loginError = (String) request.getSession().getAttribute(attribute.getLoginError());
 
-            if(loginError != null) {
+            if (loginError != null) {
                 model.addAttribute(attribute.getLoginError(), loginError);
                 request.getSession().removeAttribute(attribute.getLoginError());
             }
@@ -46,7 +46,7 @@ public class PageService {
     public void getDataLogin(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        if(auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
+        if (auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
             Pengguna pengguna = penggunaRepository.findByUsername(auth.getName()).get();
 
             model.addAttribute(attribute.getPengguna(), pengguna);
@@ -54,16 +54,21 @@ public class PageService {
     }
 
     public String getBarangPage(Model model, String cari, Pageable pageable) {
-        Page<Barang> dataBarang;
-
-        if(cari.isEmpty()) {
-            dataBarang = barangRepository.findAll(pageable);
-        } else {
-            dataBarang = barangRepository.findByNamaBarangContainingIgnoreCase(cari, pageable);
-        }
-
-        model.addAttribute(attribute.getBarang(), dataBarang);
+        model.addAttribute(attribute.getBarang(), dataBarang(cari, pageable));
         model.addAttribute(attribute.getPath(), "/barang");
         return "pages/dashboard";
+    }
+
+    public String postBarangPage(Model model, String cari, Pageable pageable) {
+        model.addAttribute(attribute.getBarang(), dataBarang(cari, pageable));
+        return "fragments/barang::reload";
+    }
+
+    public Page<Barang> dataBarang(String cari, Pageable pageable) {
+        if (cari.isEmpty()) {
+            return barangRepository.findAll(pageable);
+        } else {
+            return barangRepository.findByNamaBarangContainingIgnoreCase(cari, pageable);
+        }
     }
 }
