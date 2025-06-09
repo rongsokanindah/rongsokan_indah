@@ -155,6 +155,29 @@ main {
 .content .row-delete-data td {
     animation: fadeOutHighlight 1.5s ease;
 }
+.content .pagination .page-item .page-link {
+    background-color: #FFFFFFFF;
+    color: #198754FF;
+    cursor: pointer;
+}
+.content .pagination .page-item .page-link:hover {
+    background-color: #D1E7DDFF;
+}
+.content .pagination .page-item.dots .page-link {
+    background-color: #FFFFFFFF;
+    cursor: default;
+}
+.content .pagination .page-item.active .page-link {
+    border: 1px solid #198754FF;
+    background-color: #198754FF;
+    color: #FFFFFFFF;
+    cursor: default;
+}
+.content .pagination .page-item.disabled .page-link {
+    background-color: #F2F2F2FF;
+    color: #6C757DFF;
+    cursor: default;
+}
 
 .footer {
     margin-left: 250px;

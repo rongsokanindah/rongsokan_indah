@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   //~~~~~ Splash Screen ~~~~~~~~~~~~~~~//
   if (currentUrl === "/") {
-    //Splash to redirect
+    //Splash to Redirect
     setTimeout(() => {
       window.location.href = "/login";
     }, 300);
@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const login = document.querySelector(".login");
     const formControl = document.querySelectorAll(".form-control");
 
-    //Ckecking Validation
+    //Checking Validation
     if (login.dataset.error) {
       login.classList.add("show");
       formControl.forEach(input => {
@@ -39,8 +39,10 @@ document.addEventListener("DOMContentLoaded", () => {
   //~~~~~ After Login Succesffully ~~~~~~~~~~~~~~~//
   if (currentUrl !== "/" && currentUrl !== "/login") {
     //Initialize document
-    const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
-    const csrfHeader = document.querySelector("meta[name='csrf-header']").getAttribute("content");
+    const csrfHeaderMeta = document.querySelector("meta[name='csrf-header']");
+    const csrfTokenMeta = document.querySelector("meta[name='csrf-token']");
+    const csrfHeader = csrfHeaderMeta?.getAttribute("content");
+    const csrfToken = csrfTokenMeta?.getAttribute("content");
 
     const toggleSidebar = document.querySelector(".toggle-btn i");
     const sidebar = document.querySelector(".sidebar");
@@ -84,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //~~~~~ logout ~~~~~~~~~~~~~~~//
     logout();
     function logout() {
-      const logoutBtn = profile.querySelector("a[href='/logout'");
+      const logoutBtn = profile.querySelector("a[href='/logout']");
 
       logoutBtn.addEventListener("click", (event) => {
         event.preventDefault();
@@ -107,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const barangForm = barangModal.querySelector("form");
         const namaBarang = barangForm.querySelector("#namaBarang");
         const hargaPerKg = barangForm.querySelector("#hargaPerKg");
-        const buttonSave = barangModal.querySelector("button[type='submit'");
+        const buttonSave = barangModal.querySelector("button[type='submit']");
 
         //Reset Modal Event
         barangModal.removeEventListener("show.bs.modal", handleShowModal);
@@ -182,37 +184,41 @@ document.addEventListener("DOMContentLoaded", () => {
                 hargaPerKg: hargaPerKg.value
               })
             }).then((response) => {
-              if (response.ok) {
-                return response.json();
-              }
+              if (response.ok) return response.json();
             }).then((dataResponse) => {
+              const search = getParam("cari");
+              const page = getParam("page");
 
               //Reload Content
-              fetch("/barang", {
+              fetch(edit ? `/barang?cari=${search}&page=${page}` : "/barang", {
                 method: "POST",
-                headers: {
-                  [csrfHeader]: csrfToken
-                }
+                headers: { [csrfHeader]: csrfToken }
               }).then((response) => {
-                if (response.ok) {
-                  return response.text();
-                }
+                if (response.ok) return response.text();
               }).then((html) => {
                 content.innerHTML = html;
-                deleteBarang();
+
+                //Clear Params If Not Editing
+                if (!edit) deleteAllParams();
+
+                //Reinitialize Functions
                 barang();
+                deleteBarang();
+                searchBarang();
+                paginationBarang();
 
                 //Show Effect Changed
                 const targetID = dataResponse.id;
                 const tableBody = content.querySelector("tbody");
-                const targetRow = tableBody.querySelectorAll("tr");
 
-                targetRow.forEach((row) => {
-                  if (row.dataset.id === targetID) {
-                    row.classList.add(edit ? "row-edit-data" : "row-add-data");
-                    setTimeout(() => row.className = "", 1500);
-                  }
-                });
+                if (tableBody) {
+                  tableBody.querySelectorAll("tr").forEach((row) => {
+                    if (row.dataset.id === targetID) {
+                      row.classList.add(edit ? "row-edit-data" : "row-add-data");
+                      setTimeout(() => row.className = "", 1500);
+                    }
+                  });
+                }
               });
               bootstrap.Modal.getInstance(barangModal).hide();
             });
@@ -226,7 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
       function deleteBarang() {
         //Initialize document
         const confirmModal = document.getElementById("delete");
-        const buttonDelete = confirmModal.querySelector("button[type='submit'");
+        const buttonDelete = confirmModal.querySelector("button[type='submit']");
 
         //Reset Modal Event
         confirmModal.removeEventListener("show.bs.modal", handleShowModal);
@@ -265,51 +271,174 @@ document.addEventListener("DOMContentLoaded", () => {
           confirmModal.querySelectorAll("button").forEach((button) => button.disabled = true);
           buttonDelete.querySelector(".spinner").classList.remove("d-none");
 
-          const data = JSON.parse(modalData);
-          const targetID = data.id;
+          if (modalData) {
+            const data = JSON.parse(modalData);
+            const targetID = data.id;
 
-          //Delete Barang
-          fetch(`/api/barang/${targetID}`, {
-            method: "DELETE",
-            headers: {
-              [csrfHeader]: csrfToken,
-              "Content-Type": "application/json"
-            }
+            //Delete Barang
+            fetch(`/api/barang/${targetID}`, {
+              method: "DELETE",
+              headers: {
+                [csrfHeader]: csrfToken,
+                "Content-Type": "application/json"
+              }
+            }).then((response) => {
+              if (response.ok) {
+
+                //Show Effect Deleted
+                const tableBody = content.querySelector("tbody");
+                const targetRow = tableBody.querySelectorAll("tr");
+
+                targetRow.forEach((row) => {
+                  if (row.dataset.id === targetID) {
+                    row.classList.add("row-delete-data");
+
+                    //Get Params
+                    let search = getParam("cari");
+                    let page = getParam("page");
+
+                    if (targetRow.length == 1) {
+                      if (page != 0) {
+                        page = page - 1;
+                        addParam("page", page);
+                      }
+                    }
+
+                    //Reload Content
+                    setTimeout(() => {
+                      fetch(`/barang?cari=${search}&page=${page}`, {
+                        method: "POST",
+                        headers: { [csrfHeader]: csrfToken }
+                      }).then((response) => {
+                        if (response.ok) return response.text();
+                      }).then((html) => {
+                        content.innerHTML = html;
+
+                        //Reinitialize Functions
+                        barang();
+                        deleteBarang();
+                        searchBarang();
+                        paginationBarang();
+                      });
+                    }, 1000);
+                  }
+                });
+              }
+              bootstrap.Modal.getInstance(confirmModal).hide();
+            });
+          }
+        }
+      }
+
+      searchBarang();
+      function searchBarang() {
+        //Initialize document
+        const buttonSearch = content.querySelector(".search button");
+        const textSearch = content.querySelector(".search input");
+
+        //Params to Input Search
+        textSearch.value = getParam("cari");
+
+        //Reset Search Event
+        buttonSearch.removeEventListener("click", handleSearchClick);
+        buttonSearch.addEventListener("click", handleSearchClick);
+
+        function handleSearchClick() {
+          //Get Content
+          fetch(`/barang?cari=${textSearch.value}`, {
+            method: "POST",
+            headers: { [csrfHeader]: csrfToken }
           }).then((response) => {
-            if (response.ok) {
+            if (response.ok) return response.text();
+          }).then((html) => {
+            content.innerHTML = html;
 
-              //Show Effect Deleted
-              const tableBody = content.querySelector("tbody");
-              const targetRow = tableBody.querySelectorAll("tr");
+            //Update Params
+            deleteAllParams();
+            addParam("cari", textSearch.value);
 
-              targetRow.forEach((row) => {
-                if (row.dataset.id === targetID) {
-                  row.classList.add("row-delete-data");
-
-                  //Reload Content
-                  setTimeout(() => {
-                    fetch("/barang", {
-                      method: "POST",
-                      headers: {
-                        [csrfHeader]: csrfToken
-                      }
-                    }).then((response) => {
-                      if (response.ok) {
-                        return response.text();
-                      }
-                    }).then((html) => {
-                      content.innerHTML = html;
-                      deleteBarang();
-                      barang();
-                    });
-                  }, 1000);
-                }
-              });
-            }
-            bootstrap.Modal.getInstance(confirmModal).hide();
+            //Reinitialize Functions
+            barang();
+            deleteBarang();
+            searchBarang();
+            paginationBarang();
           });
+        }
+      }
+
+      paginationBarang();
+      function paginationBarang() {
+        //Initialize document
+        const pagination = content.querySelector(".pagination");
+
+        //Check Pagination Displayed
+        if (pagination) {
+          //Reset Page Event
+          pagination.removeEventListener("click", handlePageClick);
+          pagination.addEventListener("click", handlePageClick);
+
+          //Back or Forward Clicked
+          window.addEventListener("popstate", () => location.reload());
+        }
+
+        function handlePageClick(event) {
+          const target = event.target.closest(".page-item");
+          const disabled = target.classList.contains("disabled");
+          const active = target.classList.contains("active");
+          const dots = target.classList.contains("dots");
+
+          //Checked Not Disabled or Not Active or Not Dots
+          if (!disabled && !active && !dots) {
+            const pageLink = target.querySelector("a");
+            const page = pageLink.dataset.page;
+            const hasSearch = hasParam("cari");
+            const search = getParam("cari");
+
+            //Get Content
+            fetch(hasSearch ? `/barang?cari=${search}&page=${page}` : `/barang?page=${page}`, {
+              method: "POST",
+              headers: { [csrfHeader]: csrfToken }
+            }).then((response) => {
+              if (response.ok) return response.text();
+            }).then((html) => {
+              content.innerHTML = html;
+
+              //Add Param
+              addParam("page", page);
+
+              //Reinitialize Functions
+              barang();
+              deleteBarang();
+              searchBarang();
+              paginationBarang();
+            });
+          }
         }
       }
     }
   }
 });
+
+function hasParam(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.has(param);
+}
+
+function getParam(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param) || "";
+}
+
+function addParam(param, value) {
+  const locationSearch = window.location.search;
+  const locationPathname = window.location.pathname;
+  const urlParams = new URLSearchParams(locationSearch);
+
+  urlParams.set(param, value);
+  window.history.pushState({}, "", `${locationPathname}?${urlParams.toString()}`);
+}
+
+function deleteAllParams() {
+  const locationPathname = window.location.pathname;
+  window.history.pushState({}, "", locationPathname);
+}

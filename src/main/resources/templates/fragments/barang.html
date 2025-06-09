@@ -8,7 +8,7 @@
         <div th:if="${#lists.isEmpty(dataBarang.content)}"
              th:insert="~{components/no-data::no-data}"></div>
 
-        <div class="table-responsive mt-3" th:if="${!#lists.isEmpty(dataBarang.content)}">
+        <div class="mt-3" th:if="${!#lists.isEmpty(dataBarang.content)}">
             <table class="table table-sm table-bordered align-middle small">
                 <thead class="table-success">
                     <tr>
@@ -33,6 +33,9 @@
                 </tbody>
             </table>
         </div>
+
+        <div th:if="${!#lists.isEmpty(dataBarang.content) && dataBarang.totalPages > 1}"
+             th:insert="~{components/content-pagination::pagination(${dataBarang})}"></div>
 
         <div th:if="${pengguna.role.name() == 'ADMIN'}"
              th:insert="~{components/btn-add::add('#barang', ${@textConstant.tambahBarang})}"></div>
