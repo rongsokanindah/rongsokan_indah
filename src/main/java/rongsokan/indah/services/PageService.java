@@ -79,7 +79,7 @@ public class PageService {
 
     public String getAnakBuahPage(Model model, String cari, Pageable pageable) {
         model.addAttribute(attribute.getAnakBuah(), dataAnakBuah(cari, pageable));
-        model.addAttribute(attribute.getPath(), "/anakBuah");
+        model.addAttribute(attribute.getPath(), "/anak-buah");
         return "pages/dashboard";
     }
 

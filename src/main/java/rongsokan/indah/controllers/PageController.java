@@ -55,7 +55,7 @@ public class PageController {
             return pageService.postBarangPage(model, cari, pageable);
     }
 
-    @GetMapping("/anakBuah")
+    @GetMapping("/anak-buah")
     public String getAnakBuahPage(
         Model model,
         @RequestParam(required = false, defaultValue = "") String cari,
@@ -63,7 +63,7 @@ public class PageController {
             return pageService.getAnakBuahPage(model, cari, pageable);
     }
 
-    @PostMapping("/anakBuah")
+    @PostMapping("/anak-buah")
     public String postAnakBuahPage(
         Model model,
         @RequestParam(required = false, defaultValue = "") String cari,
