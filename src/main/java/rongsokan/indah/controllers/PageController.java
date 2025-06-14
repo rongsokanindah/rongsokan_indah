@@ -54,4 +54,20 @@ public class PageController {
         @PageableDefault(size = 5, sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
             return pageService.postBarangPage(model, cari, pageable);
     }
+
+    @GetMapping("/anakBuah")
+    public String getAnakBuahPage(
+        Model model,
+        @RequestParam(required = false, defaultValue = "") String cari,
+        @PageableDefault(size = 5, sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
+            return pageService.getAnakBuahPage(model, cari, pageable);
+    }
+
+    @PostMapping("/anakBuah")
+    public String postAnakBuahPage(
+        Model model,
+        @RequestParam(required = false, defaultValue = "") String cari,
+        @PageableDefault(size = 5, sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
+            return pageService.postAnakBuahPage(model, cari, pageable);
+    }
 }

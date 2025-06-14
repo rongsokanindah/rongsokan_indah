@@ -10,8 +10,10 @@ import org.springframework.ui.Model;
 
 import jakarta.servlet.http.HttpServletRequest;
 import rongsokan.indah.constants.AttributeConstant;
+import rongsokan.indah.entities.AnakBuah;
 import rongsokan.indah.entities.Barang;
 import rongsokan.indah.entities.Pengguna;
+import rongsokan.indah.repositories.AnakBuahRepository;
 import rongsokan.indah.repositories.BarangRepository;
 import rongsokan.indah.repositories.PenggunaRepository;
 
@@ -26,6 +28,9 @@ public class PageService {
 
     @Autowired
     private BarangRepository barangRepository;
+
+    @Autowired
+    private AnakBuahRepository anakBuahRepository;
 
     public String getLoginPage(HttpServletRequest request, Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -69,6 +74,25 @@ public class PageService {
             return barangRepository.findAll(pageable);
         } else {
             return barangRepository.findByNamaBarangContainingIgnoreCase(cari, pageable);
+        }
+    }
+
+    public String getAnakBuahPage(Model model, String cari, Pageable pageable) {
+        model.addAttribute(attribute.getAnakBuah(), dataAnakBuah(cari, pageable));
+        model.addAttribute(attribute.getPath(), "/anakBuah");
+        return "pages/dashboard";
+    }
+
+    public String postAnakBuahPage(Model model, String cari, Pageable pageable) {
+        model.addAttribute(attribute.getAnakBuah(), dataAnakBuah(cari, pageable));
+        return "fragments/anak-buah::reload";
+    }
+
+    public Page<AnakBuah> dataAnakBuah(String cari, Pageable pageable) {
+        if (cari.isEmpty()) {
+            return anakBuahRepository.findAll(pageable);
+        } else {
+            return anakBuahRepository.findByNamaOrNomorWhatsAppContainingIgnoreCase(cari, cari, pageable);
         }
     }
 }
