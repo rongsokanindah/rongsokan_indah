@@ -1,0 +1,33 @@
+<div id="anakBuah" class="modal fade" data-bs-backdrop="static" th:fragment="anak-buah">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div th:replace="~{components/modal-header::modal-header('bi-people')}"></div>
+
+            <div class="modal-body">
+                <form novalidate>
+                    <div class="mb-3">
+                        <label for="namaAnakBuah" class="form-label fs-6">
+                            <span th:text="${@textConstant.namaAnakBuah}"></span>
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input id="namaAnakBuah" type="text" class="form-control form-control-sm" required pattern="[A-Za-z\s]{3,}" minlength="3"/>
+                        <div class="invalid-feedback small" th:text="${@textConstant.wajibHurufMin3Karakter}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="nomorWhatsApp" class="form-label fs-6">
+                            <span th:text="${@textConstant.nomorWhatsApp}"></span>
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input id="nomorWhatsApp" type="tel" class="form-control form-control-sm" required pattern="^(08\d{8,13}|62\d{8,13})$" minlength="10" maxlength="15"/>
+                        <div class="invalid-feedback small" th:text="${@textConstant.wajibAwal08Or62Length10Until15Digit}"></div>
+                    </div>
+                </form>
+            </div>
+
+            <div th:replace="~{components/modal-footer::modal-footer(${@textConstant.simpan}, 'btn-success')}"></div>
+        </div>
+    </div>
+</div>

@@ -45,4 +45,18 @@ public class TextConstant {
     private final String wajibMin3Karakter = "Wajib diisi minimal 3 karakter.";
     private final String wajibTidakNegatif = "Wajib diisi dan tidak boleh negatif.";
     private final String confirmationDelete = "Apakah Anda yakin ingin menghapus ini";
+
+    private final String dataAnakBuah = "Data Anak Buah";
+    private final String cariAnakBuah = "Cari Anak Buah";
+    private final String deskripsiAnakBuah = "Daftar semua anak buah beserta nomor WhatsApp yang dapat dihubungi.";
+
+    private final String namaAnakBuah = "Nama Anak Buah";
+    private final String nomorWhatsApp = "Nomor WhatsApp";
+
+    private final String editAnakBuah = "Edit Anak Buah";
+    private final String hapusAnakBuah = "Hapus Anak Buah";
+    private final String tambahAnakBuah = "Tambah Anak Buah";
+
+    private final String wajibHurufMin3Karakter = "Wajib diisi hanya huruf dan spasi minimal 3 karakter.";
+    private final String wajibAwal08Or62Length10Until15Digit = "Wajib diisi diawali dengan 08 atau 62 dengan panjang 10-15 digit.";
 }
