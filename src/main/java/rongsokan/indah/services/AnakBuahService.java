@@ -26,7 +26,7 @@ public class AnakBuahService {
         if (cari.isEmpty()) {
             return anakBuahRepository.findAll(pageable);
         } else {
-            return anakBuahRepository.findByNamaOrNomorWhatsAppContainingIgnoreCase(cari, cari, pageable);
+            return anakBuahRepository.findByNamaContainingIgnoreCaseOrNomorWhatsAppContaining(cari, cari, pageable);
         }
     }
 

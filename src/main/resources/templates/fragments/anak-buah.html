@@ -23,10 +23,10 @@
                         th:data-id="${anakBuah.id}">
                         <td th:text="${iterStat.index + 1}"></td>
                         <td th:text="${anakBuah.nama}"></td>
-                        <td th:with="noWA=${#strings.replace(anakBuah.nomorWhatsApp, '^0', '62')}">
-                            <a th:href="'https://wa.me/' + ${noWA}"
-                               th:text="${noWA}"
-                               target="_blank">
+                        <td th:with="WA=${anakBuah.nomorWhatsApp.startsWith('0') ? '62' + anakBuah.nomorWhatsApp.substring(1) : anakBuah.nomorWhatsApp}">
+                            <a class="text-success text-decoration-none" target="_blank"
+                               th:href="'https://wa.me/' + ${WA}"
+                               th:text="${WA}">
                             </a>
                         </td>
                         <td>

@@ -12,5 +12,5 @@ import rongsokan.indah.entities.AnakBuah;
 @Repository
 public interface AnakBuahRepository extends JpaRepository<AnakBuah, UUID> {
 
-    Page<AnakBuah> findByNamaOrNomorWhatsAppContainingIgnoreCase(String nama, String nomorWhatsApp, Pageable pageable);
+    Page<AnakBuah> findByNamaContainingIgnoreCaseOrNomorWhatsAppContaining(String nama, String nomorWhatsApp, Pageable pageable);
 }

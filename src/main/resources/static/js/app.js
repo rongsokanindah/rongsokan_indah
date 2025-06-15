@@ -416,6 +416,323 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     }
+
+    //~~~~~ Anak Buah ~~~~~~~~~~~~~~~//
+    if (currentUrl === "/anak-buah") {
+      anakBuah();
+      function anakBuah() {
+        //Initialize document
+        const anakBuahModal = document.getElementById("anakBuah");
+        const anakBuahForm = anakBuahModal.querySelector("form");
+        const namaAnakBuah = anakBuahForm.querySelector("#namaAnakBuah");
+        const nomorWhatsApp = anakBuahForm.querySelector("#nomorWhatsApp");
+        const buttonSave = anakBuahModal.querySelector("button[type='submit']");
+
+        //Reset Modal Event
+        anakBuahModal.removeEventListener("show.bs.modal", handleShowModal);
+        anakBuahModal.addEventListener("show.bs.modal", handleShowModal);
+
+        let modalData = null;
+        let modalTitle = null;
+
+        function handleShowModal(event) {
+          const buttonShow = event.relatedTarget;
+          modalData = buttonShow.dataset.bsData;
+          modalTitle = buttonShow.dataset.bsTitle;
+
+          //Show Modal Title
+          anakBuahModal.querySelector(".modal-title").textContent = modalTitle;
+
+          //Reset Modal Form
+          anakBuahForm.reset();
+          anakBuahForm.classList.remove("was-validated");
+          anakBuahForm.querySelectorAll("input").forEach((input) => input.classList.remove("is-valid", "is-invalid"));
+
+          buttonSave.querySelector(".spinner").classList.add("d-none");
+          anakBuahForm.querySelectorAll("input").forEach((input) => input.disabled = false);
+          anakBuahModal.querySelectorAll("button").forEach((button) => button.disabled = false);
+
+          //Data to Form
+          if (modalData) {
+            const anakBuah = JSON.parse(modalData);
+            namaAnakBuah.value = anakBuah.nama;
+            nomorWhatsApp.value = anakBuah.nomorWhatsApp;
+          }
+
+          //Input Validation
+          anakBuahForm.addEventListener("input", (input) => {
+            if (input.target.checkValidity()) {
+              input.target.classList.remove("is-invalid");
+              input.target.classList.add("is-valid");
+            } else {
+              input.target.classList.remove("is-valid");
+              input.target.classList.add("is-invalid");
+            }
+          });
+
+          //Reset Save Event
+          buttonSave.removeEventListener("click", handleSaveClick);
+          buttonSave.addEventListener("click", handleSaveClick);
+        }
+
+        function handleSaveClick(event) {
+          event.preventDefault();
+
+          if (anakBuahForm.checkValidity()) {
+            //Disabled All Inputs and Show Loading
+            anakBuahModal.querySelectorAll("button").forEach((button) => button.disabled = true);
+            anakBuahForm.querySelectorAll("input").forEach((input) => input.disabled = true);
+            buttonSave.querySelector(".spinner").classList.remove("d-none");
+
+            //Checking Data
+            const edit = modalData ? true : false;
+            const data = edit ? JSON.parse(modalData) : {};
+
+            //Add or Edit Anak Buah
+            fetch("/api/anak-buah", {
+              method: edit ? "PUT" : "POST",
+              headers: {
+                [csrfHeader]: csrfToken,
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                id: edit ? data.id : "",
+                nama: namaAnakBuah.value,
+                nomorWhatsApp: nomorWhatsApp.value
+              })
+            }).then((response) => {
+              if (response.ok) return response.json();
+            }).then((dataResponse) => {
+              const search = getParam("cari");
+              const page = getParam("page");
+
+              //Reload Content
+              fetch(edit ? `/anak-buah?cari=${search}&page=${page}` : "/anak-buah", {
+                method: "POST",
+                headers: { [csrfHeader]: csrfToken }
+              }).then((response) => {
+                if (response.ok) return response.text();
+              }).then((html) => {
+                content.innerHTML = html;
+
+                //Clear Params If Not Editing
+                if (!edit) deleteAllParams();
+
+                //Reinitialize Functions
+                anakBuah();
+                deleteAnakBuah();
+                searchAnakBuah();
+                paginationAnakBuah();
+
+                //Show Effect Changed
+                const targetID = dataResponse.id;
+                const tableBody = content.querySelector("tbody");
+
+                if (tableBody) {
+                  tableBody.querySelectorAll("tr").forEach((row) => {
+                    if (row.dataset.id === targetID) {
+                      row.classList.add(edit ? "row-edit-data" : "row-add-data");
+                      setTimeout(() => row.className = "", 1500);
+                    }
+                  });
+                }
+              });
+              bootstrap.Modal.getInstance(anakBuahModal).hide();
+            });
+          } else {
+            anakBuahForm.classList.add("was-validated");
+          }
+        }
+      }
+
+      deleteAnakBuah();
+      function deleteAnakBuah() {
+        //Initialize document
+        const confirmModal = document.getElementById("delete");
+        const buttonDelete = confirmModal.querySelector("button[type='submit']");
+
+        //Reset Modal Event
+        confirmModal.removeEventListener("show.bs.modal", handleShowModal);
+        confirmModal.addEventListener("show.bs.modal", handleShowModal);
+
+        let modalData = null;
+        let modalTitle = null;
+
+        function handleShowModal(event) {
+          const buttonShow = event.relatedTarget;
+          modalData = buttonShow.dataset.bsData;
+          modalTitle = buttonShow.dataset.bsTitle;
+
+          //Show Modal Title
+          confirmModal.querySelector(".modal-title").textContent = modalTitle;
+
+          //Reset Modal Confirmation
+          buttonDelete.querySelector(".spinner").classList.add("d-none");
+          confirmModal.querySelectorAll("button").forEach((button) => button.disabled = false);
+
+          //Confirmation Data to Delete
+          if (modalData) {
+            const anakBuah = JSON.parse(modalData);
+            confirmModal.querySelector(".delete-data").textContent = anakBuah.nama;
+          }
+
+          //Reset Delete Event
+          buttonDelete.removeEventListener("click", handleDeleteClick);
+          buttonDelete.addEventListener("click", handleDeleteClick);
+        }
+
+        function handleDeleteClick(event) {
+          event.preventDefault();
+
+          //Disabled All Button and Show Loading
+          confirmModal.querySelectorAll("button").forEach((button) => button.disabled = true);
+          buttonDelete.querySelector(".spinner").classList.remove("d-none");
+
+          if (modalData) {
+            const data = JSON.parse(modalData);
+            const targetID = data.id;
+
+            //Delete Barang
+            fetch(`/api/anak-buah/${targetID}`, {
+              method: "DELETE",
+              headers: {
+                [csrfHeader]: csrfToken,
+                "Content-Type": "application/json"
+              }
+            }).then((response) => {
+              if (response.ok) {
+
+                //Show Effect Deleted
+                const tableBody = content.querySelector("tbody");
+                const targetRow = tableBody.querySelectorAll("tr");
+
+                targetRow.forEach((row) => {
+                  if (row.dataset.id === targetID) {
+                    row.classList.add("row-delete-data");
+
+                    //Get Params
+                    let search = getParam("cari");
+                    let page = getParam("page");
+
+                    if (targetRow.length == 1) {
+                      if (page != 0) {
+                        page = page - 1;
+                        addParam("page", page);
+                      }
+                    }
+
+                    //Reload Content
+                    setTimeout(() => {
+                      fetch(`/anak-buah?cari=${search}&page=${page}`, {
+                        method: "POST",
+                        headers: { [csrfHeader]: csrfToken }
+                      }).then((response) => {
+                        if (response.ok) return response.text();
+                      }).then((html) => {
+                        content.innerHTML = html;
+
+                        //Reinitialize Functions
+                        anakBuah();
+                        deleteAnakBuah();
+                        searchAnakBuah();
+                        paginationAnakBuah();
+                      });
+                    }, 500);
+                  }
+                });
+              }
+              bootstrap.Modal.getInstance(confirmModal).hide();
+            });
+          }
+        }
+      }
+
+      searchAnakBuah();
+      function searchAnakBuah() {
+        //Initialize document
+        const buttonSearch = content.querySelector(".search button");
+        const textSearch = content.querySelector(".search input");
+
+        //Params to Input Search
+        textSearch.value = getParam("cari");
+
+        //Reset Search Event
+        buttonSearch.removeEventListener("click", handleSearchClick);
+        buttonSearch.addEventListener("click", handleSearchClick);
+
+        function handleSearchClick() {
+          //Get Content
+          fetch(`/anak-buah?cari=${textSearch.value}`, {
+            method: "POST",
+            headers: { [csrfHeader]: csrfToken }
+          }).then((response) => {
+            if (response.ok) return response.text();
+          }).then((html) => {
+            content.innerHTML = html;
+
+            //Update Params
+            deleteAllParams();
+            addParam("cari", textSearch.value);
+
+            //Reinitialize Functions
+            anakBuah();
+            deleteAnakBuah();
+            searchAnakBuah();
+            paginationAnakBuah();
+          });
+        }
+      }
+
+      paginationAnakBuah();
+      function paginationAnakBuah() {
+        //Initialize document
+        const pagination = content.querySelector(".pagination");
+
+        //Check Pagination Displayed
+        if (pagination) {
+          //Reset Page Event
+          pagination.removeEventListener("click", handlePageClick);
+          pagination.addEventListener("click", handlePageClick);
+
+          //Back or Forward Clicked
+          window.addEventListener("popstate", () => location.reload());
+        }
+
+        function handlePageClick(event) {
+          const target = event.target.closest(".page-item");
+          const disabled = target.classList.contains("disabled");
+          const active = target.classList.contains("active");
+          const dots = target.classList.contains("dots");
+
+          //Checked Not Disabled or Not Active or Not Dots
+          if (!disabled && !active && !dots) {
+            const pageLink = target.querySelector("a");
+            const page = pageLink.dataset.page;
+            const hasSearch = hasParam("cari");
+            const search = getParam("cari");
+
+            //Get Content
+            fetch(hasSearch ? `/anak-buah?cari=${search}&page=${page}` : `/anak-buah?page=${page}`, {
+              method: "POST",
+              headers: { [csrfHeader]: csrfToken }
+            }).then((response) => {
+              if (response.ok) return response.text();
+            }).then((html) => {
+              content.innerHTML = html;
+
+              //Add Param
+              addParam("page", page);
+
+              //Reinitialize Functions
+              anakBuah();
+              deleteAnakBuah();
+              searchAnakBuah();
+              paginationAnakBuah();
+            });
+          }
+        }
+      }
+    }
   }
 });
 
