@@ -23,14 +23,11 @@ public class BarangService {
     }
 
     public Page<Barang> getBarang(String cari, Pageable pageable) {
-        Page<Barang> barang;
-
         if (cari.isEmpty()) {
-            barang = barangRepository.findAll(pageable);
+            return barangRepository.findAll(pageable);
         } else {
-            barang = barangRepository.findByNamaBarangContainingIgnoreCase(cari, pageable);
+            return barangRepository.findByNamaBarangContainingIgnoreCase(cari, pageable);
         }
-        return barang;
     }
 
     public Barang updateBarang(Barang barang) {
