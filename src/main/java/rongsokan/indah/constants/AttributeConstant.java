@@ -11,5 +11,6 @@ public class AttributeConstant {
     private final String anakBuah = "dataAnakBuah";
     private final String pengguna = "pengguna";
     private final String barang = "dataBarang";
+    private final String modal = "dataModal";
     private final String path = "path";
 }

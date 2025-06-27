@@ -35,39 +35,50 @@ public class PageController {
     }
 
     @GetMapping("/modal")
-    public String modalPage() {
-        return "pages/dashboard";
+    public String getModalPage(
+            Model model,
+            @RequestParam(required = false, defaultValue = "") String cari,
+            @PageableDefault(size = 5, sort = "tanggal", direction = Direction.DESC) Pageable pageable) {
+        return pageService.getModalPage(model, cari, pageable);
+    }
+
+    @PostMapping("/modal")
+    public String postModalPage(
+            Model model,
+            @RequestParam(required = false, defaultValue = "") String cari,
+            @PageableDefault(size = 5, sort = "tanggal", direction = Direction.DESC) Pageable pageable) {
+        return pageService.postModalPage(model, cari, pageable);
     }
 
     @GetMapping("/barang")
     public String getBarangPage(
-        Model model,
-        @RequestParam(required = false, defaultValue = "") String cari,
-        @PageableDefault(size = 5, sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
-            return pageService.getBarangPage(model, cari, pageable);
+            Model model,
+            @RequestParam(required = false, defaultValue = "") String cari,
+            @PageableDefault(size = 5, sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
+        return pageService.getBarangPage(model, cari, pageable);
     }
 
     @PostMapping("/barang")
     public String postBarangPage(
-        Model model,
-        @RequestParam(required = false, defaultValue = "") String cari,
-        @PageableDefault(size = 5, sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
-            return pageService.postBarangPage(model, cari, pageable);
+            Model model,
+            @RequestParam(required = false, defaultValue = "") String cari,
+            @PageableDefault(size = 5, sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
+        return pageService.postBarangPage(model, cari, pageable);
     }
 
     @GetMapping("/anak-buah")
     public String getAnakBuahPage(
-        Model model,
-        @RequestParam(required = false, defaultValue = "") String cari,
-        @PageableDefault(size = 5, sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
-            return pageService.getAnakBuahPage(model, cari, pageable);
+            Model model,
+            @RequestParam(required = false, defaultValue = "") String cari,
+            @PageableDefault(size = 5, sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
+        return pageService.getAnakBuahPage(model, cari, pageable);
     }
 
     @PostMapping("/anak-buah")
     public String postAnakBuahPage(
-        Model model,
-        @RequestParam(required = false, defaultValue = "") String cari,
-        @PageableDefault(size = 5, sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
-            return pageService.postAnakBuahPage(model, cari, pageable);
+            Model model,
+            @RequestParam(required = false, defaultValue = "") String cari,
+            @PageableDefault(size = 5, sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
+        return pageService.postAnakBuahPage(model, cari, pageable);
     }
 }
