@@ -3,7 +3,7 @@
         <div th:replace="~{components/content-title::title(bi-boxes,
                         ${@textConstant.dataBarang}, ${@textConstant.deskripsiBarang})}"></div>
 
-        <div th:replace="~{components/content-search::search(${@textConstant.cariBarang})}"></div>
+        <div th:replace="~{components/content-search::search(${@textConstant.cariBarang}, false)}"></div>
 
         <div th:if="${#lists.isEmpty(dataBarang.content)}"
              th:insert="~{components/no-data::no-data}"></div>

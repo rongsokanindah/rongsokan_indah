@@ -1,6 +1,9 @@
-<div class="row mt-2" th:fragment="search(hint)">
+<div class="row mt-2" th:fragment="search(hint, calendar)">
     <div class="col d-flex justify-content-end">
         <div class="input-group search">
+            <button type="calendar" class="btn btn-sm btn-success" th:if="${calendar}">
+                <i class="bi bi-calendar3"></i>
+            </button>
             <input type="text" class="form-control form-control-sm" th:placeholder="${hint}">
             <button type="button" class="btn btn-sm btn-success">
                 <i class="bi bi-search"></i>
