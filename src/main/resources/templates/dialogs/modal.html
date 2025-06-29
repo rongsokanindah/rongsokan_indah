@@ -1,0 +1,33 @@
+<div id="modal" class="modal fade" data-bs-backdrop="static" th:fragment="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div th:replace="~{components/modal-header::modal-header('bi-cash')}"></div>
+
+            <div class="modal-body">
+                <form novalidate>
+                    <div class="mb-3">
+                        <label for="namaAnakBuah" class="form-label fs-6">
+                            <span th:text="${@textConstant.namaAnakBuah}"></span>
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input id="namaAnakBuah" type="text" class="form-control form-control-sm" autocomplete="off" required/>
+                        <div class="invalid-feedback small" th:text="${@textConstant.wajibMemilihAnakBuah}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="jumlahModal" class="form-label fs-6">
+                            <span th:text="${@textConstant.jumlahModal}"></span>
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input id="jumlahModal" type="number" class="form-control form-control-sm" required min="50000"/>
+                        <div class="invalid-feedback small" th:text="${@textConstant.wajibMin50Ribu}"></div>
+                    </div>
+                </form>
+            </div>
+
+            <div th:replace="~{components/modal-footer::modal-footer(${@textConstant.simpan}, 'btn-success')}"></div>
+        </div>
+    </div>
+</div>

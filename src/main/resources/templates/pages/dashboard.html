@@ -7,6 +7,7 @@
         <div th:replace="~{partials/topbar::topbar}"></div>
 
         <main th:switch="${path}">
+            <div th:case="'/modal'" th:insert="~{fragments/modal::modal}"></div>
             <div th:case="'/barang'" th:insert="~{fragments/barang::barang}"></div>
             <div th:case="'/anak-buah'" th:insert="~{fragments/anak-buah::anak-buah}"></div>
         </main>

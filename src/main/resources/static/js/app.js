@@ -100,6 +100,413 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    //~~~~~ Modal ~~~~~~~~~~~~~~~//
+    if (currentUrl === "/modal") {
+      modal();
+      function modal() {
+        //Initialize document
+        const modalModal = document.getElementById("modal");
+        const modalForm = modalModal.querySelector("form");
+        const namaAnakBuah = modalForm.querySelector("#namaAnakBuah");
+        const jumlahModal = modalForm.querySelector("#jumlahModal");
+        const buttonSave = modalModal.querySelector("button[type='submit']");
+
+        //Reset Modal Event
+        modalModal.removeEventListener("show.bs.modal", handleShowModal);
+        modalModal.addEventListener("show.bs.modal", handleShowModal);
+
+        let anakBuah = null;
+        let modalData = null;
+        let modalTitle = null;
+
+        function handleShowModal(event) {
+          const buttonShow = event.relatedTarget;
+          modalData = buttonShow.dataset.bsData;
+          modalTitle = buttonShow.dataset.bsTitle;
+
+          //Show Modal Title
+          modalModal.querySelector(".modal-title").textContent = modalTitle;
+
+          //Reset Modal Form
+          modalForm.reset();
+          modalForm.classList.remove("was-validated");
+          modalForm.querySelectorAll("input").forEach((input) => input.classList.remove("is-valid", "is-invalid"));
+
+          buttonSave.querySelector(".spinner").classList.add("d-none");
+          modalForm.querySelectorAll("input").forEach((input) => input.disabled = false);
+          modalModal.querySelectorAll("button").forEach((button) => button.disabled = false);
+          modalModal.querySelectorAll(".dropdown-menu").forEach((dropdown) => dropdown.remove());
+
+          //Data to Form
+          if (modalData) {
+            const modal = JSON.parse(modalData);
+            namaAnakBuah.value = modal.anakBuah.nama;
+            jumlahModal.value = modal.jumlah;
+            anakBuah = modal.anakBuah;
+          }
+
+          //Reset Input Event
+          modalForm.removeEventListener("input", handleInputChange);
+          modalForm.addEventListener("input", handleInputChange);
+
+          //Reset Save Event
+          buttonSave.removeEventListener("click", handleSaveClick);
+          buttonSave.addEventListener("click", handleSaveClick);
+        }
+
+        function handleInputChange(input) {
+          if (input.target == namaAnakBuah) {
+            input.target.classList.remove("is-valid");
+            input.target.classList.add("is-invalid");
+            anakBuah = null;
+
+            if (namaAnakBuah.value != "") {
+              //Get Data Dropdown
+              fetch(`/api/anak-buah?cari=${namaAnakBuah.value}&sort=nama`, {
+                method: "GET",
+                headers: { [csrfHeader]: csrfToken }
+              }).then((response) => {
+                if (response.ok) return response.json();
+              }).then((dataResponse) => {
+                //Reset List
+                modalModal.querySelectorAll(".dropdown-menu").forEach((dropdown) => dropdown.remove());
+
+                //Create Dropdown List
+                if (dataResponse.content.length > 0) {
+                  //Create Dropdown Menu
+                  const ul = document.createElement("ul");
+                  ul.style.width = `${namaAnakBuah.offsetWidth}px`;
+                  ul.className = "dropdown-menu show py-0";
+                  ul.style.marginTop = "-25px";
+
+                  //Create Dropdown Item
+                  dataResponse.content.forEach((dataAnakBuah) => {
+                    const li = document.createElement("li");
+                    const value = new RegExp(namaAnakBuah.value, "gi");
+                    const bold = match => `<strong>${match}</strong>`;
+
+                    li.className = "dropdown-item small rounded";
+                    li.innerHTML = dataAnakBuah.nama.replace(value, bold);
+
+                    li.addEventListener("click", () => {
+                      namaAnakBuah.value = dataAnakBuah.nama
+                      anakBuah = dataAnakBuah;
+
+                      input.target.classList.remove("is-invalid");
+                      input.target.classList.add("is-valid");
+                      ul.remove();
+                    });
+                    ul.appendChild(li);
+                  });
+                  namaAnakBuah.parentElement.appendChild(ul);
+                }
+              });
+            } else {
+              modalModal.querySelectorAll(".dropdown-menu").forEach((dropdown) => dropdown.remove());
+            }
+          } else {
+            if (input.target.checkValidity()) {
+              input.target.classList.remove("is-invalid");
+              input.target.classList.add("is-valid");
+            } else {
+              input.target.classList.remove("is-valid");
+              input.target.classList.add("is-invalid");
+            }
+          }
+        }
+
+        function handleSaveClick(event) {
+          event.preventDefault();
+
+          if (modalForm.checkValidity() && anakBuah != null) {
+            //Disabled All Inputs and Show Loading
+            modalModal.querySelectorAll("button").forEach((button) => button.disabled = true);
+            modalForm.querySelectorAll("input").forEach((input) => input.disabled = true);
+            buttonSave.querySelector(".spinner").classList.remove("d-none");
+
+            //Checking Data
+            const edit = modalData ? true : false;
+            const data = edit ? JSON.parse(modalData) : {};
+
+            //Add or Edit Modal
+            fetch("/api/modal", {
+              method: edit ? "PUT" : "POST",
+              headers: {
+                [csrfHeader]: csrfToken,
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                id: edit ? data.id : "",
+                jumlah: jumlahModal.value,
+                anakBuah: anakBuah,
+              })
+            }).then((response) => {
+              if (response.ok) return response.json();
+            }).then((dataResponse) => {
+              const search = getParam("cari");
+              const page = getParam("page");
+
+              //Reload Content
+              fetch(edit ? `/modal?cari=${search}&page=${page}` : "/modal", {
+                method: "POST",
+                headers: { [csrfHeader]: csrfToken }
+              }).then((response) => {
+                if (response.ok) return response.text();
+              }).then((html) => {
+                content.innerHTML = html;
+
+                //Clear Params If Not Editing
+                if (!edit) deleteAllParams();
+
+                //Reinitialize Functions
+                modal();
+                deleteModal();
+                searchModal();
+                paginationModal();
+
+                //Show Effect Changed
+                const targetID = dataResponse.id;
+                const tableBody = content.querySelector("tbody");
+
+                if (tableBody) {
+                  tableBody.querySelectorAll("tr").forEach((row) => {
+                    if (row.dataset.id === targetID) {
+                      row.classList.add(edit ? "row-edit-data" : "row-add-data");
+                      setTimeout(() => row.className = "", 1500);
+                    }
+                  });
+                }
+              });
+              bootstrap.Modal.getInstance(modalModal).hide();
+            });
+          } else {
+            if (anakBuah == null) namaAnakBuah.classList.add("is-invalid");
+            if (jumlahModal.value < 50000) jumlahModal.classList.add("is-invalid");
+          }
+        }
+      }
+
+      deleteModal();
+      function deleteModal() {
+        //Initialize document
+        const confirmModal = document.getElementById("delete");
+        const buttonDelete = confirmModal.querySelector("button[type='submit']");
+
+        //Reset Modal Event
+        confirmModal.removeEventListener("show.bs.modal", handleShowModal);
+        confirmModal.addEventListener("show.bs.modal", handleShowModal);
+
+        let modalData = null;
+        let modalTitle = null;
+
+        function handleShowModal(event) {
+          const buttonShow = event.relatedTarget;
+          modalData = buttonShow.dataset.bsData;
+          modalTitle = buttonShow.dataset.bsTitle;
+
+          //Show Modal Title
+          confirmModal.querySelector(".modal-title").textContent = modalTitle;
+
+          //Reset Modal Confirmation
+          buttonDelete.querySelector(".spinner").classList.add("d-none");
+          confirmModal.querySelectorAll("button").forEach((button) => button.disabled = false);
+
+          //Confirmation Data to Delete
+          if (modalData) {
+            const modal = JSON.parse(modalData);
+            confirmModal.querySelector(".delete-data").textContent = modal.anakBuah.nama;
+          }
+
+          //Reset Delete Event
+          buttonDelete.removeEventListener("click", handleDeleteClick);
+          buttonDelete.addEventListener("click", handleDeleteClick);
+        }
+
+        function handleDeleteClick(event) {
+          event.preventDefault();
+
+          //Disabled All Button and Show Loading
+          confirmModal.querySelectorAll("button").forEach((button) => button.disabled = true);
+          buttonDelete.querySelector(".spinner").classList.remove("d-none");
+
+          if (modalData) {
+            const data = JSON.parse(modalData);
+            const targetID = data.id;
+
+            //Delete Modal
+            fetch(`/api/modal/${targetID}`, {
+              method: "DELETE",
+              headers: {
+                [csrfHeader]: csrfToken,
+                "Content-Type": "application/json"
+              }
+            }).then((response) => {
+              if (response.ok) {
+
+                //Show Effect Deleted
+                const tableBody = content.querySelector("tbody");
+                const targetRow = tableBody.querySelectorAll("tr");
+
+                targetRow.forEach((row) => {
+                  if (row.dataset.id === targetID) {
+                    row.classList.add("row-delete-data");
+
+                    //Get Params
+                    let search = getParam("cari");
+                    let page = getParam("page");
+
+                    if (targetRow.length == 1) {
+                      if (page != 0) {
+                        page = page - 1;
+                        addParam("page", page);
+                      }
+                    }
+
+                    //Reload Content
+                    setTimeout(() => {
+                      fetch(`/modal?cari=${search}&page=${page}`, {
+                        method: "POST",
+                        headers: { [csrfHeader]: csrfToken }
+                      }).then((response) => {
+                        if (response.ok) return response.text();
+                      }).then((html) => {
+                        content.innerHTML = html;
+
+                        //Reinitialize Functions
+                        modal();
+                        deleteModal();
+                        searchModal();
+                        paginationModal();
+                      });
+                    }, 1000);
+                  }
+                });
+              }
+              bootstrap.Modal.getInstance(confirmModal).hide();
+            });
+          }
+        }
+      }
+
+      searchModal();
+      function searchModal() {
+        //Initialize document
+        const buttonSearchDate = content.querySelector(".search button[type='calendar']");
+        const buttonSearch = content.querySelector(".search button[type='button']");
+        const textSearch = content.querySelector(".search input");
+
+        //Params to Input Search
+        textSearch.value = getParam("cari");
+
+        //Show Date Picker
+        flatpickr(buttonSearchDate, {
+          locale: "id",
+          dateFormat: "d/m/Y",
+          onReady: (_, __, instance) => {
+            const month = instance.monthsDropdownContainer;
+            const year = instance.currentYearElement;
+
+            const textMonthYear = document.createElement("div");
+            textMonthYear.className = "custom-month-year";
+            updateText();
+
+            month.classList.add("d-none");
+            year.parentElement.classList.add("d-none");
+            month.parentElement.appendChild(textMonthYear);
+
+            instance.config.onMonthChange.push(updateText);
+            instance.config.onYearChange.push(updateText);
+
+            function updateText() {
+              const year = instance.currentYear;
+              const month = instance.l10n.months.longhand[instance.currentMonth];
+              textMonthYear.textContent = `${month} ${year}`;
+            }
+          },
+          onChange: (_, selected, __) => {
+            textSearch.value = selected;
+            handleSearchClick();
+          },
+        });
+
+        //Reset Search Event
+        buttonSearch.removeEventListener("click", handleSearchClick);
+        buttonSearch.addEventListener("click", handleSearchClick);
+
+        function handleSearchClick() {
+          //Get Content
+          fetch(`/modal?cari=${textSearch.value}`, {
+            method: "POST",
+            headers: { [csrfHeader]: csrfToken }
+          }).then((response) => {
+            if (response.ok) return response.text();
+          }).then((html) => {
+            content.innerHTML = html;
+
+            //Update Params
+            deleteAllParams();
+            addParam("cari", textSearch.value);
+
+            //Reinitialize Functions
+            modal();
+            deleteModal();
+            searchModal();
+            paginationModal();
+          });
+        }
+      }
+
+      paginationModal();
+      function paginationModal() {
+        //Initialize document
+        const pagination = content.querySelector(".pagination");
+
+        //Check Pagination Displayed
+        if (pagination) {
+          //Reset Page Event
+          pagination.removeEventListener("click", handlePageClick);
+          pagination.addEventListener("click", handlePageClick);
+
+          //Back or Forward Clicked
+          window.addEventListener("popstate", () => location.reload());
+        }
+
+        function handlePageClick(event) {
+          const target = event.target.closest(".page-item");
+          const disabled = target.classList.contains("disabled");
+          const active = target.classList.contains("active");
+          const dots = target.classList.contains("dots");
+
+          //Checked Not Disabled or Not Active or Not Dots
+          if (!disabled && !active && !dots) {
+            const pageLink = target.querySelector("a");
+            const page = pageLink.dataset.page;
+            const hasSearch = hasParam("cari");
+            const search = getParam("cari");
+
+            //Get Content
+            fetch(hasSearch ? `/modal?cari=${search}&page=${page}` : `/modal?page=${page}`, {
+              method: "POST",
+              headers: { [csrfHeader]: csrfToken }
+            }).then((response) => {
+              if (response.ok) return response.text();
+            }).then((html) => {
+              content.innerHTML = html;
+
+              //Add Param
+              addParam("page", page);
+
+              //Reinitialize Functions
+              modal();
+              deleteModal();
+              searchModal();
+              paginationModal();
+            });
+          }
+        }
+      }
+    }
+
     //~~~~~ Barang ~~~~~~~~~~~~~~~//
     if (currentUrl === "/barang") {
       barang();

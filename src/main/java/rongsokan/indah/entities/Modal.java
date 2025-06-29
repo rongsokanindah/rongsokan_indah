@@ -13,7 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 
@@ -25,17 +25,15 @@ public class Modal {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @NotBlank
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "anak_buah_id", nullable = false)
     private AnakBuah anakBuah;
 
-    @NotBlank
     @PositiveOrZero
     @Column(precision = 10, scale = 2, nullable = false)
     private BigDecimal jumlah;
 
-    @NotBlank
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime tanggal;

@@ -59,4 +59,19 @@ public class TextConstant {
 
     private final String wajibHurufMin3Karakter = "Wajib diisi hanya huruf dan spasi minimal 3 karakter.";
     private final String wajibAwal08Or62Length10Until15Digit = "Wajib diisi diawali dengan 08 atau 62 dengan panjang 10-15 digit.";
+
+    private final String dataModal = "Data Modal";
+    private final String cariModal = "Cari Modal";
+    private final String deskripsiModalAnakBuah = "Daftar semua jumlah modal yang telah Anda terima.";
+    private final String deskripsiModalAdmin = "Daftar semua jumlah modal yang telah diberikan ke Anak Buah.";
+
+    private final String jumlahModal = "Jumlah Modal";
+    private final String tanggalDiBerikan = "Tanggal di Berikan";
+
+    private final String editModal = "Edit Modal";
+    private final String hapusModal = "Hapus Modal";
+    private final String tambahModal = "Tambah Modal";
+
+    private final String wajibMemilihAnakBuah = "Wajib diisi dengan memilih Anak Buah.";
+    private final String wajibMin50Ribu = "Wajib diisi dengan minimal nominal Rp50.000.";
 }

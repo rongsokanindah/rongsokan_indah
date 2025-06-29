@@ -24,4 +24,13 @@ public class Dates {
         }
         return false;
     }
+
+    public static LocalDate parseDate(String input) {
+        for (DateTimeFormatter format : SUPPORTED_FORMATS) {
+            try {
+                return LocalDate.parse(input, format);
+            } catch (DateTimeParseException e) {}
+        }
+        return LocalDate.now();
+    }
 }

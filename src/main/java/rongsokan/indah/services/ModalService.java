@@ -1,5 +1,6 @@
 package rongsokan.indah.services;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -19,6 +20,7 @@ import rongsokan.indah.entities.Pengguna;
 import rongsokan.indah.repositories.ModalRepository;
 import rongsokan.indah.repositories.PenggunaRepository;
 import rongsokan.indah.utils.Dates;
+import rongsokan.indah.utils.Types;
 
 @Service
 public class ModalService {
@@ -44,8 +46,16 @@ public class ModalService {
                     : modalRepository.findByAnakBuah_Id(pengguna.getId(), pageable);
         }
 
+        if (Types.isBigDecimal(cari)) {
+            BigDecimal jumlah = new BigDecimal(cari);
+
+            return isAdmin
+                    ? modalRepository.findByJumlah(jumlah, pageable)
+                    : modalRepository.findByAnakBuah_IdAndJumlah(pengguna.getId(), jumlah, pageable);
+        }
+
         if (Dates.isLocalDate(cari)) {
-            LocalDate date = LocalDate.parse(cari);
+            LocalDate date = Dates.parseDate(cari);
             LocalDateTime start = date.atStartOfDay();
             LocalDateTime end = date.atTime(LocalTime.MAX);
 
@@ -55,8 +65,8 @@ public class ModalService {
         }
 
         return isAdmin
-                ? modalRepository.findByAnakBuah_NamaContainingIgnoreCaseOrJumlah(cari, cari, pageable)
-                : modalRepository.findByJumlah(cari, pageable);
+                ? modalRepository.findByAnakBuah_NamaContainingIgnoreCase(cari, pageable)
+                : modalRepository.findByAnakBuah_IdAndAnakBuah_NamaContainingIgnoreCase(pengguna.getId(), cari, pageable);
     }
 
     public Modal updateModal(Modal modal) {

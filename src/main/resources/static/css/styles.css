@@ -29,6 +29,66 @@ main {
     font-size: 12px;
 }
 
+.dropdown-item:active {
+    background-color: #198754FF;
+    color: #FFFFFFFF;
+}
+
+.flatpickr-calendar {
+    font-size: 12px;
+    border-radius: 10px;
+}
+.flatpickr-calendar .flatpickr-months {
+    background-color: #198754FF;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+.flatpickr-calendar .flatpickr-prev-month svg,
+.flatpickr-calendar .flatpickr-next-month svg {
+    margin-bottom: 15px;
+    fill: #FFFFFFFF;
+}
+.flatpickr-calendar .flatpickr-prev-month:hover,
+.flatpickr-calendar .flatpickr-next-month:hover {
+    background-color: #0A6C22FF;
+}
+.flatpickr-calendar .flatpickr-prev-month:hover {
+    border-top-left-radius: 10px;
+}
+.flatpickr-calendar .flatpickr-next-month:hover {
+    border-top-right-radius: 10px;
+}
+.flatpickr-calendar .flatpickr-prev-month svg:hover,
+.flatpickr-calendar .flatpickr-next-month svg:hover {
+    fill: #FFFFFFFF;
+}
+.flatpickr-calendar .flatpickr-current-month {
+    font-size: medium;
+    color: #FFFFFFFF;
+}
+.flatpickr-calendar .flatpickr-monthDropdown-months,
+.flatpickr-calendar .flatpickr-current-month select:hover {
+    background-color: #198754FF;
+}
+.flatpickr-calendar .flatpickr-monthDropdown-months option {
+    font-size: 12px;
+}
+.flatpickr-calendar .flatpickr-weekdays {
+    background-color: #19875480;
+    font-size: 10px;
+}
+.flatpickr-calendar .flatpickr-day:hover {
+    background-color: #0A6C22FF;
+    color: #FFFFFFFF;
+}
+.flatpickr-calendar .flatpickr-day.selected {
+    background-color: #198754FF;
+}
+.flatpickr-calendar .flatpickr-day:nth-child(7n),
+.flatpickr-calendar .flatpickr-weekday:nth-child(7) {
+    color: #DC3545FF;
+}
+
 /*~~ LOGIN ~~*/
 .login {
     width: 25%;
