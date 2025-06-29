@@ -23,6 +23,7 @@ public class TextConstant {
     private final String transaksiKeluar = "Transaksi Keluar";
     private final String rekapitulasiLaporan = "Rekapitulasi Laporan";
 
+    private final String kelolaAkun = "Kelola Akun";
     private final String profil = "Profil";
     private final String logout = "Logout";
 

@@ -22,6 +22,9 @@ public class PageService {
     private PenggunaRepository penggunaRepository;
 
     @Autowired
+    private PenggunaService penggunaService;
+
+    @Autowired
     private ModalService modalService;
 
     @Autowired
@@ -54,6 +57,17 @@ public class PageService {
 
             model.addAttribute(attribute.getPengguna(), pengguna);
         }
+    }
+
+    public String getKelolaAkunPage(Model model, String cari, Pageable pageable) {
+        model.addAttribute(attribute.getAkun(), penggunaService.getPengguna(cari, pageable));
+        model.addAttribute(attribute.getPath(), "/kelola-akun");
+        return "pages/dashboard";
+    }
+
+    public String postKelolaAkunPage(Model model, String cari, Pageable pageable) {
+        model.addAttribute(attribute.getAkun(), penggunaService.getPengguna(cari, pageable));
+        return "fragments/kelola-akun::reload";
     }
 
     public String getModalPage(Model model, String cari, Pageable pageable) {

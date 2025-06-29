@@ -2,13 +2,21 @@
     <div class="d-flex justify-content-between align-items-center">
         <div class="fs-4 fw-bold text-dark" th:text="${@textConstant.title}"></div>
         <div class="fs-6 text-dark p-1 rounded-1 toggle-profile">
-            <span class="text-capitalize" th:text="${pengguna.username}"></span>
+            <span class="text-capitalize"
+                th:text="${pengguna.role.name() == 'ADMIN' ? pengguna.username : pengguna.anakBuah.nama}"></span>
             <i class="bi bi-chevron-down"></i>
         </div>
     </div>
 
     <div class="position-absolute end-0 mx-4 p-2 bg-light border rounded-1 shadow profile">
-        <a class="d-flex w-100 fs-6 p-2 text-decoration-none rounded-1" href="/profil">
+        <a class="d-flex w-100 fs-6 p-2 text-decoration-none rounded-1" href="/kelola-akun"
+            th:if="${pengguna.role.name() == 'ADMIN'}">
+            <i class="bi bi-person-gear"></i>
+            <span class="ps-2" th:text="${@textConstant.kelolaAkun}"></span>
+        </a>
+
+        <a class="d-flex w-100 fs-6 p-2 text-decoration-none rounded-1" href="/profil"
+            th:if="${pengguna.role.name() == 'ANAK_BUAH'}">
             <i class="bi bi-person"></i>
             <span class="ps-2" th:text="${@textConstant.profil}"></span>
         </a>

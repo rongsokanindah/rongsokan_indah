@@ -29,6 +29,22 @@ public class PageController {
         return pageService.getLoginPage(request, model);
     }
 
+    @GetMapping("/kelola-akun")
+    public String getKelolaAkunPage(
+            Model model,
+            @RequestParam(required = false, defaultValue = "") String cari,
+            @PageableDefault(size = 5, sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
+        return pageService.getKelolaAkunPage(model, cari, pageable);
+    }
+
+    @PostMapping("/kelola-akun")
+    public String postKelolaAkunPage(
+            Model model,
+            @RequestParam(required = false, defaultValue = "") String cari,
+            @PageableDefault(size = 5, sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
+        return pageService.postKelolaAkunPage(model, cari, pageable);
+    }
+
     @GetMapping("/dashboard")
     public String dashboardPage() {
         return "pages/dashboard";
