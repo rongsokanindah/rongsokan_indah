@@ -75,4 +75,22 @@ public class TextConstant {
 
     private final String wajibMemilihAnakBuah = "Wajib diisi dengan memilih Anak Buah.";
     private final String wajibMin50Ribu = "Wajib diisi dengan minimal nominal Rp50.000.";
+
+    private final String dataAkun = "Data Akun";
+    private final String cariAkun = "Cari Akun";
+    private final String deskripsiAkun = "Daftar semua akun milik Admin dan Anak Buah.";
+
+    private final String nama = "Nama";
+    private final String role = "Role";
+    private final String pilihRole = "Pilih Role";
+    private final String konfirmasiPassword = "Konfirmasi Password";
+
+    private final String editAkun = "Edit Akun";
+    private final String hapusAkun = "Hapus Akun";
+    private final String tambahAkun = "Tambah Akun";
+
+    private final String wajibMemilihRole = "Wajib memilih Role terlebih dahulu.";
+    private final String wajibHurufAngkaMin5Karakter = "Wajib diisi hanya huruf, angka, dan garis bawah minimal 5 karakter.";
+    private final String wajibSamaDenganPassword = "Wajib diisi dan harus sama dengan Password yang dimasukkan sebelumnya.";
+    private final String wajibHurufAngkaSimbolMin6Karakter = "Wajib diisi hanya huruf besar/kecil, angka, dan simbol minimal 6 karakter.";
 }

@@ -29,9 +29,19 @@ main {
     font-size: 12px;
 }
 
+.modal .btn-close:focus {
+    box-shadow: none;
+    background-color: #F2F2F2FF;
+}
+
 .dropdown-item:active {
     background-color: #198754FF;
     color: #FFFFFFFF;
+}
+
+.input-password button:hover {
+    border-radius: 50%;
+    background-color: #F2F2F2FF;
 }
 
 .flatpickr-calendar {

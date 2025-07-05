@@ -1,0 +1,91 @@
+<div id="kelolaAkun" class="modal fade" data-bs-backdrop="static" th:fragment="kelola-akun">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div th:replace="~{components/modal-header::modal-header('bi-person-gear')}"></div>
+
+            <div class="modal-body">
+                <form novalidate>
+                    <div class="mb-3">
+                        <label for="role" class="form-label fs-6">
+                            <span th:text="${@textConstant.role}"></span>
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <div class="dropdown">
+                            <button type="button" class="form-control form-control-sm d-flex justify-content-between align-items-center" data-bs-toggle="dropdown">
+                                <span id="role" th:text="${@textConstant.pilihRole}"></span>
+                                <span class="dropdown-toggle-icon">
+                                    <i class="bi bi-caret-down-fill"></i>
+                                </span>
+                            </button>
+
+                            <ul class="dropdown-menu py-0 w-100">
+                                <li th:each="role : ${T(rongsokan.indah.entities.Pengguna.Role).values()}"
+                                    th:data-value="${role.name().toUpperCase()}"
+                                    th:text="${role.name().replace('_', ' ')}"
+                                    class="dropdown-item small rounded">
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="invalid-feedback small" th:text="${@textConstant.wajibMemilihRole}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="namaAnakBuah" class="form-label fs-6">
+                            <span th:text="${@textConstant.namaAnakBuah}"></span>
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input id="namaAnakBuah" type="text" class="form-control form-control-sm" autocomplete="off" required/>
+                        <div class="invalid-feedback small" th:text="${@textConstant.wajibMemilihAnakBuah}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="username" class="form-label fs-6">
+                            <span th:text="${@textConstant.username}"></span>
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input id="username" type="text" class="form-control form-control-sm" autocomplete="off" minlength="5" pattern="^[a-zA-Z0-9_]+$" required/>
+                        <div class="invalid-feedback small" th:text="${@textConstant.wajibHurufAngkaMin5Karakter}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label fs-6">
+                            <span th:text="${@textConstant.password}"></span>
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <div class="position-relative input-password">
+                            <input id="password" type="password" class="form-control form-control-sm" autocomplete="off" minlength="6" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$" required/>
+                            <button type="button" class="btn btn-sm position-absolute top-50 end-0 translate-middle-y me-2 border-0">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+
+                        <div class="invalid-feedback small" th:text="${@textConstant.wajibHurufAngkaSimbolMin6Karakter}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="konfirmasiPassword" class="form-label fs-6">
+                            <span th:text="${@textConstant.konfirmasiPassword}"></span>
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <div class="position-relative input-password">
+                            <input id="konfirmasiPassword" type="password" class="form-control form-control-sm" autocomplete="off" minlength="6" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$" required/>
+                            <button type="button" class="btn btn-sm position-absolute top-50 end-0 translate-middle-y me-2 border-0">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+
+                        <div class="invalid-feedback small" th:text="${@textConstant.wajibSamaDenganPassword}"></div>
+                    </div>
+                </form>
+            </div>
+
+            <div th:replace="~{components/modal-footer::modal-footer(${@textConstant.simpan}, 'btn-success')}"></div>
+        </div>
+    </div>
+</div>
