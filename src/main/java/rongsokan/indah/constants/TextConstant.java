@@ -89,8 +89,9 @@ public class TextConstant {
     private final String hapusAkun = "Hapus Akun";
     private final String tambahAkun = "Tambah Akun";
 
+    private final String usernameTelahDigunakan = "Username telah digunakan.";
     private final String wajibMemilihRole = "Wajib memilih Role terlebih dahulu.";
     private final String wajibHurufAngkaMin5Karakter = "Wajib diisi hanya huruf, angka, dan garis bawah minimal 5 karakter.";
-    private final String wajibSamaDenganPassword = "Wajib diisi dan harus sama dengan Password yang dimasukkan sebelumnya.";
+    private final String wajibSamaDenganPassword = "Wajib diisi dan harus sama dengan sebelumnya.";
     private final String wajibHurufAngkaSimbolMin6Karakter = "Wajib diisi hanya huruf besar/kecil, angka, dan simbol minimal 6 karakter.";
 }

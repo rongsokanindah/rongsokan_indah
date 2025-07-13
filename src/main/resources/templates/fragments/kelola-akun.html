@@ -23,7 +23,7 @@
                     <tr th:each="akun, iterStat : ${dataAkun.content}"
                         th:data-id="${akun.id}">
                         <td th:text="${iterStat.index + 1}"></td>
-                        <td th:text="${pengguna.role.name() == 'ADMIN' ? '-' : akun.anakBuah.nama}"></td>
+                        <td th:text="${akun.role.name() == 'ADMIN' ? '-' : akun.anakBuah.nama}"></td>
                         <td th:text="${akun.username}"></td>
                         <td th:text="${akun.role.name() == 'ADMIN' ? 'ADMIN' : 'ANAK BUAH'}"></td>
                         <td>

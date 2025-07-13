@@ -60,13 +60,13 @@ public class PageService {
     }
 
     public String getKelolaAkunPage(Model model, String cari, Pageable pageable) {
-        model.addAttribute(attribute.getAkun(), penggunaService.getPengguna(cari, pageable));
+        model.addAttribute(attribute.getAkun(), penggunaService.getPengguna(cari, "", pageable));
         model.addAttribute(attribute.getPath(), "/kelola-akun");
         return "pages/dashboard";
     }
 
     public String postKelolaAkunPage(Model model, String cari, Pageable pageable) {
-        model.addAttribute(attribute.getAkun(), penggunaService.getPengguna(cari, pageable));
+        model.addAttribute(attribute.getAkun(), penggunaService.getPengguna(cari, "", pageable));
         return "fragments/kelola-akun::reload";
     }
 

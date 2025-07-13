@@ -48,7 +48,7 @@
                         </label>
 
                         <input id="username" type="text" class="form-control form-control-sm" autocomplete="off" minlength="5" pattern="^[a-zA-Z0-9_]+$" required/>
-                        <div class="invalid-feedback small" th:text="${@textConstant.wajibHurufAngkaMin5Karakter}"></div>
+                        <div class="invalid-feedback small" th:data-error="${@textConstant.wajibHurufAngkaMin5Karakter + '~' + @textConstant.usernameTelahDigunakan}"></div>
                     </div>
 
                     <div class="mb-3">
@@ -57,13 +57,7 @@
                             <span class="text-danger">*</span>
                         </label>
 
-                        <div class="position-relative input-password">
-                            <input id="password" type="password" class="form-control form-control-sm" autocomplete="off" minlength="6" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$" required/>
-                            <button type="button" class="btn btn-sm position-absolute top-50 end-0 translate-middle-y me-2 border-0">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                        </div>
-
+                        <input id="password" type="password" class="form-control form-control-sm" autocomplete="off" minlength="6" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$" required/>
                         <div class="invalid-feedback small" th:text="${@textConstant.wajibHurufAngkaSimbolMin6Karakter}"></div>
                     </div>
 
@@ -73,13 +67,7 @@
                             <span class="text-danger">*</span>
                         </label>
 
-                        <div class="position-relative input-password">
-                            <input id="konfirmasiPassword" type="password" class="form-control form-control-sm" autocomplete="off" minlength="6" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$" required/>
-                            <button type="button" class="btn btn-sm position-absolute top-50 end-0 translate-middle-y me-2 border-0">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                        </div>
-
+                        <input id="konfirmasiPassword" type="password" class="form-control form-control-sm" autocomplete="off" minlength="6" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$" required/>
                         <div class="invalid-feedback small" th:text="${@textConstant.wajibSamaDenganPassword}"></div>
                     </div>
                 </form>

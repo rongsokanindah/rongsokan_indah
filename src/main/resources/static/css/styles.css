@@ -39,11 +39,6 @@ main {
     color: #FFFFFFFF;
 }
 
-.input-password button:hover {
-    border-radius: 50%;
-    background-color: #F2F2F2FF;
-}
-
 .flatpickr-calendar {
     font-size: 12px;
     border-radius: 10px;

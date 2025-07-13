@@ -100,6 +100,532 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    //~~~~~ Kelola Akun ~~~~~~~~~~~~~~~//
+    if (currentUrl === "/kelola-akun") {
+      kelolaAkun();
+      function kelolaAkun() {
+        //Initialize document
+        const kelolaAkunModal = document.getElementById("kelolaAkun");
+        const kelolaAkunForm = kelolaAkunModal.querySelector("form");
+        const role = kelolaAkunForm.querySelector("#role");
+        const namaAnakBuah = kelolaAkunForm.querySelector("#namaAnakBuah");
+        const username = kelolaAkunForm.querySelector("#username");
+        const password = kelolaAkunForm.querySelector("#password");
+        const konfirmasiPassword = kelolaAkunForm.querySelector("#konfirmasiPassword");
+        const buttonSave = kelolaAkunModal.querySelector("button[type='submit']");
+
+        //Default
+        const pilihRole = role.textContent;
+        const patternPassword = password.getAttribute("pattern");
+
+        //Reset Modal Event
+        kelolaAkunModal.removeEventListener("show.bs.modal", handleShowModal);
+        kelolaAkunModal.addEventListener("show.bs.modal", handleShowModal);
+
+        let anakBuah = null;
+        let roleValue = null;
+        let modalData = null;
+        let modalTitle = null;
+
+        function handleShowModal(event) {
+          const buttonShow = event.relatedTarget;
+          modalData = buttonShow.dataset.bsData;
+          modalTitle = buttonShow.dataset.bsTitle;
+
+          //Show Modal Title
+          kelolaAkunModal.querySelector(".modal-title").textContent = modalTitle;
+
+          //Reset Modal Form
+          kelolaAkunForm.reset();
+          kelolaAkunForm.classList.remove("was-validated");
+          kelolaAkunForm.querySelectorAll("input").forEach((input) => input.classList.remove("is-valid", "is-invalid"));
+
+          buttonSave.querySelector(".spinner").classList.add("d-none");
+          kelolaAkunForm.querySelectorAll("input").forEach((input) => input.disabled = false);
+          kelolaAkunModal.querySelectorAll("button").forEach((button) => button.disabled = false);
+
+          anakBuah = null;
+          roleValue = null;
+          role.textContent = pilihRole;
+
+          namaAnakBuah.removeAttribute("required");
+          namaAnakBuah.parentElement.classList.add("d-none");
+          role.parentElement.classList.remove("is-valid", "is-invalid");
+          role.closest(".dropdown").classList.remove("is-valid", "is-invalid");
+
+          password.parentElement.querySelector("label .text-danger").classList.remove("d-none");
+          konfirmasiPassword.parentElement.querySelector("label .text-danger").classList.remove("d-none");
+          [["required", ""], ["pattern", patternPassword]].forEach(([attr, value]) => password.setAttribute(attr, value));
+          [["required", ""], ["pattern", patternPassword]].forEach(([attr, value]) => konfirmasiPassword.setAttribute(attr, value));
+
+          //Data to Form
+          if (modalData) {
+            const akun = JSON.parse(modalData);
+
+            role.closest(".dropdown").querySelectorAll(".dropdown-menu .dropdown-item").forEach((item) => {
+              if (item.dataset.value == akun.role) {
+                roleValue = akun.role
+                role.textContent = item.textContent;
+              }
+            });
+
+            if (akun.anakBuah) {
+              anakBuah = akun.anakBuah;
+              namaAnakBuah.value = akun.anakBuah.nama;
+
+              namaAnakBuah.setAttribute("required", "");
+              namaAnakBuah.parentElement.classList.remove("d-none");
+            } else {
+              anakBuah = null;
+              namaAnakBuah.value = "";
+
+              namaAnakBuah.removeAttribute("required");
+              namaAnakBuah.parentElement.classList.add("d-none");
+            }
+
+            username.value = akun.username;
+
+            ["pattern", "required"].forEach((attr) => password.removeAttribute(attr));
+            ["pattern", "required"].forEach((attr) => konfirmasiPassword.removeAttribute(attr));
+            password.parentElement.querySelector("label .text-danger").classList.add("d-none");
+            konfirmasiPassword.parentElement.querySelector("label .text-danger").classList.add("d-none");
+          }
+
+          //Role Handle Select Change
+          role.closest(".dropdown").querySelectorAll(".dropdown-menu .dropdown-item").forEach((item) => {
+            item.addEventListener("click", (event) => {
+              roleValue = event.target.dataset.value;
+              role.textContent = event.target.textContent;
+
+              role.parentElement.classList.add("is-valid");
+              role.parentElement.classList.remove("is-invalid");
+              role.closest(".dropdown").classList.add("is-valid");
+              role.closest(".dropdown").classList.remove("is-invalid");
+
+              if (roleValue == "ADMIN") {
+                anakBuah = null;
+                namaAnakBuah.value = "";
+
+                namaAnakBuah.removeAttribute("required");
+                namaAnakBuah.parentElement.classList.add("d-none");
+                namaAnakBuah.classList.remove("is-valid", "is-invalid");
+              } else {
+                namaAnakBuah.setAttribute("required", "");
+                namaAnakBuah.parentElement.classList.remove("d-none");
+              }
+            })
+          });
+
+          //Reset Input Event
+          kelolaAkunForm.removeEventListener("input", handleInputChange);
+          kelolaAkunForm.addEventListener("input", handleInputChange);
+
+          //Reset Save Event
+          buttonSave.removeEventListener("click", handleSaveClick);
+          buttonSave.addEventListener("click", handleSaveClick);
+        }
+
+        function handleInputChange(input) {
+          if (input.target == namaAnakBuah) {
+            input.target.classList.remove("is-valid");
+            input.target.classList.add("is-invalid");
+            anakBuah = null;
+
+            if (namaAnakBuah.value != "") {
+              //Get Data Dropdown
+              fetch(`/api/anak-buah?cari=${namaAnakBuah.value}&sort=nama`, {
+                method: "GET",
+                headers: { [csrfHeader]: csrfToken }
+              }).then((response) => {
+                if (response.ok) return response.json();
+              }).then((dataResponse) => {
+                //Reset List
+                namaAnakBuah.parentElement.querySelectorAll(".dropdown-menu").forEach((dropdown) => dropdown.remove());
+
+                //Create Dropdown List
+                if (dataResponse.content.length > 0) {
+                  //Create Dropdown Menu
+                  const ul = document.createElement("ul");
+                  ul.style.width = `${namaAnakBuah.offsetWidth}px`;
+                  ul.className = "dropdown-menu show py-0";
+                  ul.style.marginTop = "-25px";
+
+                  //Create Dropdown Item
+                  dataResponse.content.forEach((dataAnakBuah) => {
+                    const li = document.createElement("li");
+                    const value = new RegExp(namaAnakBuah.value, "gi");
+                    const bold = match => `<strong>${match}</strong>`;
+
+                    li.className = "dropdown-item small rounded";
+                    li.innerHTML = dataAnakBuah.nama.replace(value, bold);
+
+                    li.addEventListener("click", () => {
+                      namaAnakBuah.value = dataAnakBuah.nama
+                      anakBuah = dataAnakBuah;
+
+                      input.target.classList.remove("is-invalid");
+                      input.target.classList.add("is-valid");
+                      ul.remove();
+                    });
+                    ul.appendChild(li);
+                  });
+                  namaAnakBuah.parentElement.appendChild(ul);
+                }
+              });
+            } else {
+              namaAnakBuah.parentElement.querySelectorAll(".dropdown-menu").forEach((dropdown) => dropdown.remove());
+            }
+          } else if (input.target == username) {
+            const dataError = username.parentElement.querySelector("div");
+            const errorMessage = dataError.dataset.error.split("~");
+
+            if (input.target.checkValidity()) {
+              //Get Data Pengguna By Username
+              fetch(`/api/pengguna?username=${username.value}`, {
+                method: "GET",
+                headers: { [csrfHeader]: csrfToken }
+              }).then((response) => {
+                if (response.ok) return response.json();
+              }).then((dataResponse) => {
+                //Check Username Used
+                if (dataResponse.size == 1) {
+                  dataError.textContent = errorMessage[1];
+                  input.target.classList.remove("is-valid");
+                  input.target.classList.add("is-invalid");
+                } else {
+                  input.target.classList.remove("is-invalid");
+                  input.target.classList.add("is-valid");
+                }
+              });
+            } else {
+              dataError.textContent = errorMessage[0];
+              input.target.classList.remove("is-valid");
+              input.target.classList.add("is-invalid");
+            }
+          } else if (input.target == konfirmasiPassword) {
+            if (konfirmasiPassword.value == password.value) {
+              input.target.classList.remove("is-invalid");
+              input.target.classList.add("is-valid");
+            } else {
+              input.target.classList.remove("is-valid");
+              input.target.classList.add("is-invalid");
+            }
+          } else {
+            if (input.target.checkValidity()) {
+              input.target.classList.remove("is-invalid");
+              input.target.classList.add("is-valid");
+            } else {
+              input.target.classList.remove("is-valid");
+              input.target.classList.add("is-invalid");
+            }
+          }
+        }
+
+        function handleSaveClick(event) {
+          event.preventDefault();
+
+          if (kelolaAkunForm.checkValidity() && roleValue != null && !username.classList.contains("is-invalid") ||
+            (!namaAnakBuah.parentElement.classList.contains("d-none") && anakBuah != null)) {
+
+            //Disabled All Inputs and Show Loading
+            kelolaAkunModal.querySelectorAll("button").forEach((button) => button.disabled = true);
+            kelolaAkunForm.querySelectorAll("input").forEach((input) => input.disabled = true);
+            buttonSave.querySelector(".spinner").classList.remove("d-none");
+
+            //Checking Data
+            const edit = modalData ? true : false;
+            const data = edit ? JSON.parse(modalData) : {};
+
+            //Add or Edit Akun
+            fetch("/api/pengguna", {
+              method: edit ? "PUT" : "POST",
+              headers: {
+                [csrfHeader]: csrfToken,
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                id: edit ? data.id : "",
+                anakBuah: roleValue == 'ADMIN' ? null : anakBuah,
+                username: username.value,
+                password: password.value,
+                role: roleValue,
+              })
+            }).then((response) => {
+              if (response.ok) return response.json();
+            }).then((dataResponse) => {
+              const search = getParam("cari");
+              const page = getParam("page");
+
+              //Reload Content
+              fetch(edit ? `/kelola-akun?cari=${search}&page=${page}` : "/kelola-akun", {
+                method: "POST",
+                headers: { [csrfHeader]: csrfToken }
+              }).then((response) => {
+                if (response.ok) return response.text();
+              }).then((html) => {
+                content.innerHTML = html;
+
+                //Clear Params If Not Editing
+                if (!edit) deleteAllParams();
+
+                //Reinitialize Functions
+                kelolaAkun();
+                deleteAkun();
+                searchAkun();
+                paginationAkun();
+
+                //Show Effect Changed
+                const targetID = dataResponse.id;
+                const tableBody = content.querySelector("tbody");
+
+                if (tableBody) {
+                  tableBody.querySelectorAll("tr").forEach((row) => {
+                    if (row.dataset.id === targetID) {
+                      row.classList.add(edit ? "row-edit-data" : "row-add-data");
+                      setTimeout(() => row.className = "", 1500);
+                    }
+                  });
+                }
+              });
+              bootstrap.Modal.getInstance(kelolaAkunModal).hide();
+            });
+          } else {
+            if (roleValue == null) {
+              role.parentElement.classList.add("is-invalid")
+              role.closest(".dropdown").classList.add("is-invalid");
+            }
+
+            if (!namaAnakBuah.parentElement.classList.contains("d-none") && anakBuah == null) {
+              namaAnakBuah.classList.add("is-invalid");
+            }
+
+            const validationUsername = username.parentElement.querySelector("div");
+            if (validationUsername.textContent == "") {
+              validationUsername.textContent = validationUsername.dataset.error.split("~")[0];
+              username.classList.add("is-invalid");
+            }
+
+            if (!new RegExp(patternPassword).test(password.value)) {
+              password.classList.add("is-invalid");
+            }
+
+            if (konfirmasiPassword.value == "" || password.value != konfirmasiPassword.value) {
+              konfirmasiPassword.classList.add("is-invalid");
+            }
+          }
+        }
+      }
+
+      deleteAkun();
+      function deleteAkun() {
+        //Initialize document
+        const confirmModal = document.getElementById("delete");
+        const buttonDelete = confirmModal.querySelector("button[type='submit']");
+
+        //Reset Modal Event
+        confirmModal.removeEventListener("show.bs.modal", handleShowModal);
+        confirmModal.addEventListener("show.bs.modal", handleShowModal);
+
+        let modalData = null;
+        let modalTitle = null;
+
+        function handleShowModal(event) {
+          const buttonShow = event.relatedTarget;
+          modalData = buttonShow.dataset.bsData;
+          modalTitle = buttonShow.dataset.bsTitle;
+
+          //Show Modal Title
+          confirmModal.querySelector(".modal-title").textContent = modalTitle;
+
+          //Reset Modal Confirmation
+          buttonDelete.querySelector(".spinner").classList.add("d-none");
+          confirmModal.querySelectorAll("button").forEach((button) => button.disabled = false);
+
+          //Confirmation Data to Delete
+          if (modalData) {
+            const akun = JSON.parse(modalData);
+            confirmModal.querySelector(".delete-data").textContent = akun.username;
+          }
+
+          //Reset Delete Event
+          buttonDelete.removeEventListener("click", handleDeleteClick);
+          buttonDelete.addEventListener("click", handleDeleteClick);
+        }
+
+        function handleDeleteClick(event) {
+          event.preventDefault();
+
+          //Disabled All Button and Show Loading
+          confirmModal.querySelectorAll("button").forEach((button) => button.disabled = true);
+          buttonDelete.querySelector(".spinner").classList.remove("d-none");
+
+          if (modalData) {
+            const data = JSON.parse(modalData);
+            const targetID = data.id;
+
+            //Delete Akun
+            fetch(`/api/pengguna/${targetID}`, {
+              method: "DELETE",
+              headers: {
+                [csrfHeader]: csrfToken,
+                "Content-Type": "application/json"
+              }
+            }).then((response) => {
+              if (response.ok) {
+
+                //Show Effect Deleted
+                const tableBody = content.querySelector("tbody");
+                const targetRow = tableBody.querySelectorAll("tr");
+
+                targetRow.forEach((row) => {
+                  if (row.dataset.id === targetID) {
+                    row.classList.add("row-delete-data");
+
+                    //Get Params
+                    let search = getParam("cari");
+                    let page = getParam("page");
+
+                    if (targetRow.length == 1) {
+                      if (page != 0) {
+                        page = page - 1;
+                        addParam("page", page);
+                      }
+                    }
+
+                    //Reload Content
+                    setTimeout(() => {
+                      fetch(`/kelola-akun?cari=${search}&page=${page}`, {
+                        method: "POST",
+                        headers: { [csrfHeader]: csrfToken }
+                      }).then((response) => {
+                        if (response.ok) return response.text();
+                      }).then((html) => {
+                        content.innerHTML = html;
+
+                        //Reinitialize Functions
+                        kelolaAkun();
+                        deleteAkun();
+                        searchAkun();
+                        paginationAkun();
+                      });
+                    }, 1000);
+                  }
+                });
+              }
+              bootstrap.Modal.getInstance(confirmModal).hide();
+            });
+          }
+        }
+      }
+
+      searchAkun();
+      function searchAkun() {
+        //Initialize document
+        const buttonSearchRole = content.querySelector(".search button[type='custom']");
+        const buttonSearch = content.querySelector(".search button[type='button']");
+        const textSearch = content.querySelector(".search input");
+
+        //Params to Input Search
+        textSearch.value = getParam("cari");
+
+        //Show Search Role
+        buttonSearchRole.classList.add("dropdown-toggle");
+        buttonSearchRole.setAttribute("data-bs-toggle", "dropdown");
+        buttonSearchRole.querySelector("i").className = "bi bi-person-workspace";
+
+        const dropdownRole = document.getElementById("role").parentElement.parentElement;
+        const dropdownMenuRole = dropdownRole.querySelector(".dropdown-menu");
+        const dropdownSearchRole = document.createElement("ul");
+
+        dropdownSearchRole.innerHTML = dropdownMenuRole.innerHTML;
+        dropdownSearchRole.className = "dropdown-menu";
+
+        buttonSearchRole.parentElement.appendChild(dropdownSearchRole);
+        dropdownSearchRole.querySelectorAll(".dropdown-item").forEach((item) => {
+          item.addEventListener("click", (event) => {
+            textSearch.value = event.target.dataset.value;
+            handleSearchClick();
+          });
+        });
+
+        //Reset Search Event
+        buttonSearch.removeEventListener("click", handleSearchClick);
+        buttonSearch.addEventListener("click", handleSearchClick);
+
+        function handleSearchClick() {
+          //Get Content
+          fetch(`/kelola-akun?cari=${textSearch.value}`, {
+            method: "POST",
+            headers: { [csrfHeader]: csrfToken }
+          }).then((response) => {
+            if (response.ok) return response.text();
+          }).then((html) => {
+            content.innerHTML = html;
+
+            //Update Params
+            deleteAllParams();
+            addParam("cari", textSearch.value);
+
+            //Reinitialize Functions
+            kelolaAkun();
+            deleteAkun();
+            searchAkun();
+            paginationAkun();
+          });
+        }
+      }
+
+      paginationAkun();
+      function paginationAkun() {
+        //Initialize document
+        const pagination = content.querySelector(".pagination");
+
+        //Check Pagination Displayed
+        if (pagination) {
+          //Reset Page Event
+          pagination.removeEventListener("click", handlePageClick);
+          pagination.addEventListener("click", handlePageClick);
+
+          //Back or Forward Clicked
+          window.addEventListener("popstate", () => location.reload());
+        }
+
+        function handlePageClick(event) {
+          const target = event.target.closest(".page-item");
+          const disabled = target.classList.contains("disabled");
+          const active = target.classList.contains("active");
+          const dots = target.classList.contains("dots");
+
+          //Checked Not Disabled or Not Active or Not Dots
+          if (!disabled && !active && !dots) {
+            const pageLink = target.querySelector("a");
+            const page = pageLink.dataset.page;
+            const hasSearch = hasParam("cari");
+            const search = getParam("cari");
+
+            //Get Content
+            fetch(hasSearch ? `/kelola-akun?cari=${search}&page=${page}` : `/kelola-akun?page=${page}`, {
+              method: "POST",
+              headers: { [csrfHeader]: csrfToken }
+            }).then((response) => {
+              if (response.ok) return response.text();
+            }).then((html) => {
+              content.innerHTML = html;
+
+              //Add Param
+              addParam("page", page);
+
+              //Reinitialize Functions
+              kelolaAkun();
+              deleteAkun();
+              searchAkun();
+              paginationAkun();
+            });
+          }
+        }
+      }
+    }
+
     //~~~~~ Modal ~~~~~~~~~~~~~~~//
     if (currentUrl === "/modal") {
       modal();
@@ -391,7 +917,7 @@ document.addEventListener("DOMContentLoaded", () => {
       searchModal();
       function searchModal() {
         //Initialize document
-        const buttonSearchDate = content.querySelector(".search button[type='calendar']");
+        const buttonSearchDate = content.querySelector(".search button[type='custom']");
         const buttonSearch = content.querySelector(".search button[type='button']");
         const textSearch = content.querySelector(".search input");
 

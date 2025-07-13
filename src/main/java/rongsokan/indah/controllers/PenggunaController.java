@@ -35,8 +35,9 @@ public class PenggunaController {
     @GetMapping
     public Page<Pengguna> getPengguna(
             @RequestParam(required = false, defaultValue = "") String cari,
+            @RequestParam(required = false, defaultValue = "") String username,
             @PageableDefault(size = 5, sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
-        return penggunaService.getPengguna(cari, pageable);
+        return penggunaService.getPengguna(cari, username, pageable);
     }
 
     @PutMapping
