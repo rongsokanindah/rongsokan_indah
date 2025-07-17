@@ -94,4 +94,8 @@ public class TextConstant {
     private final String wajibHurufAngkaMin5Karakter = "Wajib diisi hanya huruf, angka, dan garis bawah minimal 5 karakter.";
     private final String wajibSamaDenganPassword = "Wajib diisi dan harus sama dengan sebelumnya.";
     private final String wajibHurufAngkaSimbolMin6Karakter = "Wajib diisi hanya huruf besar/kecil, angka, dan simbol minimal 6 karakter.";
+
+    private final String dataProfil = "Data Profil";
+    private final String gantiPassword = "Ganti Password";
+    private final String deskripsiProfil = "Menampilkan informasi profil Anda.";
 }

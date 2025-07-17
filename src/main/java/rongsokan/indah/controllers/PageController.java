@@ -45,6 +45,11 @@ public class PageController {
         return pageService.postKelolaAkunPage(model, cari, pageable);
     }
 
+    @GetMapping("/profil")
+    public String getProfilPage(Model model) {
+        return pageService.getProfilPage(model);
+    }
+
     @GetMapping("/dashboard")
     public String dashboardPage() {
         return "pages/dashboard";

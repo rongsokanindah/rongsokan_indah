@@ -70,6 +70,11 @@ public class PageService {
         return "fragments/kelola-akun::reload";
     }
 
+    public String getProfilPage(Model model) {
+        model.addAttribute(attribute.getPath(), "/profil");
+        return "pages/dashboard";
+    }
+
     public String getModalPage(Model model, String cari, Pageable pageable) {
         model.addAttribute(attribute.getModal(), modalService.getModal(cari, pageable));
         model.addAttribute(attribute.getPath(), "/modal");

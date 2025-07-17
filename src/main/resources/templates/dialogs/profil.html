@@ -1,0 +1,33 @@
+<div id="profil" class="modal fade" data-bs-backdrop="static" th:fragment="profil">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div th:replace="~{components/modal-header::modal-header('bi-person')}"></div>
+
+            <div class="modal-body">
+                <form novalidate>
+                    <div class="mb-3">
+                        <label for="password" class="form-label fs-6">
+                            <span th:text="${@textConstant.password}"></span>
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input id="password" type="password" class="form-control form-control-sm" autocomplete="off" minlength="6" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$" required/>
+                        <div class="invalid-feedback small" th:text="${@textConstant.wajibHurufAngkaSimbolMin6Karakter}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="konfirmasiPassword" class="form-label fs-6">
+                            <span th:text="${@textConstant.konfirmasiPassword}"></span>
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input id="konfirmasiPassword" type="password" class="form-control form-control-sm" autocomplete="off" minlength="6" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$" required/>
+                        <div class="invalid-feedback small" th:text="${@textConstant.wajibSamaDenganPassword}"></div>
+                    </div>
+                </form>
+            </div>
+
+            <div th:replace="~{components/modal-footer::modal-footer(${@textConstant.simpan}, 'btn-success')}"></div>
+        </div>
+    </div>
+</div>
