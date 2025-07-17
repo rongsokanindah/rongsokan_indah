@@ -32,7 +32,6 @@
                         <td th:text="${#temporals.format(modal.tanggal, 'dd MMMM yyyy HH:mm')}"></td>
                         <td th:if="${pengguna.role.name() == 'ADMIN'}">
                             <button th:replace="~{components/btn-edit::edit('#modal', ${@textConstant.editModal}, ${modal})}"></button>
-                            <button th:replace="~{components/btn-delete::delete(${@textConstant.hapusModal}, ${modal})}"></button>
                         </td>
                     </tr>
                 </tbody>
@@ -47,8 +46,5 @@
 
         <div th:if="${pengguna.role.name() == 'ADMIN'}"
              th:insert="~{dialogs/modal::modal}"></div>
-
-        <div th:if="${pengguna.role.name() == 'ADMIN'}"
-             th:insert="~{dialogs/confirmation::confirmation}"></div>
     </th:block>
 </div>

@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -43,7 +42,7 @@ public class ModalService {
         if (cari.isEmpty()) {
             return isAdmin
                     ? modalRepository.findAll(pageable)
-                    : modalRepository.findByAnakBuah_Id(pengguna.getId(), pageable);
+                    : modalRepository.findByAnakBuah_Id(pengguna.getAnakBuah().getId(), pageable);
         }
 
         if (Types.isBigDecimal(cari)) {
@@ -51,7 +50,7 @@ public class ModalService {
 
             return isAdmin
                     ? modalRepository.findByJumlah(jumlah, pageable)
-                    : modalRepository.findByAnakBuah_IdAndJumlah(pengguna.getId(), jumlah, pageable);
+                    : modalRepository.findByAnakBuah_IdAndJumlah(pengguna.getAnakBuah().getId(), jumlah, pageable);
         }
 
         if (Dates.isLocalDate(cari)) {
@@ -61,12 +60,12 @@ public class ModalService {
 
             return isAdmin
                     ? modalRepository.findByTanggalBetween(start, end, pageable)
-                    : modalRepository.findByAnakBuah_IdAndTanggalBetween(pengguna.getId(), start, end, pageable);
+                    : modalRepository.findByAnakBuah_IdAndTanggalBetween(pengguna.getAnakBuah().getId(), start, end, pageable);
         }
 
         return isAdmin
                 ? modalRepository.findByAnakBuah_NamaContainingIgnoreCase(cari, pageable)
-                : modalRepository.findByAnakBuah_IdAndAnakBuah_NamaContainingIgnoreCase(pengguna.getId(), cari, pageable);
+                : modalRepository.findByAnakBuah_IdAndAnakBuah_NamaContainingIgnoreCase(pengguna.getAnakBuah().getId(), cari, pageable);
     }
 
     public Modal updateModal(Modal modal) {
@@ -76,9 +75,5 @@ public class ModalService {
 
             return modalRepository.save(data);
         }).orElseThrow(() -> new EntityNotFoundException(""));
-    }
-
-    public void deleteModal(UUID id) {
-        modalRepository.deleteById(id);
     }
 }

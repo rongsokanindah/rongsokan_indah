@@ -632,14 +632,14 @@ document.addEventListener("DOMContentLoaded", () => {
       function modal() {
         //Initialize document
         const modalModal = document.getElementById("modal");
-        const modalForm = modalModal.querySelector("form");
-        const namaAnakBuah = modalForm.querySelector("#namaAnakBuah");
-        const jumlahModal = modalForm.querySelector("#jumlahModal");
-        const buttonSave = modalModal.querySelector("button[type='submit']");
+        const modalForm = modalModal?.querySelector("form");
+        const namaAnakBuah = modalForm?.querySelector("#namaAnakBuah");
+        const jumlahModal = modalForm?.querySelector("#jumlahModal");
+        const buttonSave = modalModal?.querySelector("button[type='submit']");
 
         //Reset Modal Event
-        modalModal.removeEventListener("show.bs.modal", handleShowModal);
-        modalModal.addEventListener("show.bs.modal", handleShowModal);
+        modalModal?.removeEventListener("show.bs.modal", handleShowModal);
+        modalModal?.addEventListener("show.bs.modal", handleShowModal);
 
         let anakBuah = null;
         let modalData = null;
@@ -786,7 +786,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 //Reinitialize Functions
                 modal();
-                deleteModal();
                 searchModal();
                 paginationModal();
 
@@ -808,108 +807,6 @@ document.addEventListener("DOMContentLoaded", () => {
           } else {
             if (anakBuah == null) namaAnakBuah.classList.add("is-invalid");
             if (jumlahModal.value < 50000) jumlahModal.classList.add("is-invalid");
-          }
-        }
-      }
-
-      deleteModal();
-      function deleteModal() {
-        //Initialize document
-        const confirmModal = document.getElementById("delete");
-        const buttonDelete = confirmModal.querySelector("button[type='submit']");
-
-        //Reset Modal Event
-        confirmModal.removeEventListener("show.bs.modal", handleShowModal);
-        confirmModal.addEventListener("show.bs.modal", handleShowModal);
-
-        let modalData = null;
-        let modalTitle = null;
-
-        function handleShowModal(event) {
-          const buttonShow = event.relatedTarget;
-          modalData = buttonShow.dataset.bsData;
-          modalTitle = buttonShow.dataset.bsTitle;
-
-          //Show Modal Title
-          confirmModal.querySelector(".modal-title").textContent = modalTitle;
-
-          //Reset Modal Confirmation
-          buttonDelete.querySelector(".spinner").classList.add("d-none");
-          confirmModal.querySelectorAll("button").forEach((button) => button.disabled = false);
-
-          //Confirmation Data to Delete
-          if (modalData) {
-            const modal = JSON.parse(modalData);
-            confirmModal.querySelector(".delete-data").textContent = modal.anakBuah.nama;
-          }
-
-          //Reset Delete Event
-          buttonDelete.removeEventListener("click", handleDeleteClick);
-          buttonDelete.addEventListener("click", handleDeleteClick);
-        }
-
-        function handleDeleteClick(event) {
-          event.preventDefault();
-
-          //Disabled All Button and Show Loading
-          confirmModal.querySelectorAll("button").forEach((button) => button.disabled = true);
-          buttonDelete.querySelector(".spinner").classList.remove("d-none");
-
-          if (modalData) {
-            const data = JSON.parse(modalData);
-            const targetID = data.id;
-
-            //Delete Modal
-            fetch(`/api/modal/${targetID}`, {
-              method: "DELETE",
-              headers: {
-                [csrfHeader]: csrfToken,
-                "Content-Type": "application/json"
-              }
-            }).then((response) => {
-              if (response.ok) {
-
-                //Show Effect Deleted
-                const tableBody = content.querySelector("tbody");
-                const targetRow = tableBody.querySelectorAll("tr");
-
-                targetRow.forEach((row) => {
-                  if (row.dataset.id === targetID) {
-                    row.classList.add("row-delete-data");
-
-                    //Get Params
-                    let search = getParam("cari");
-                    let page = getParam("page");
-
-                    if (targetRow.length == 1) {
-                      if (page != 0) {
-                        page = page - 1;
-                        addParam("page", page);
-                      }
-                    }
-
-                    //Reload Content
-                    setTimeout(() => {
-                      fetch(`/modal?cari=${search}&page=${page}`, {
-                        method: "POST",
-                        headers: { [csrfHeader]: csrfToken }
-                      }).then((response) => {
-                        if (response.ok) return response.text();
-                      }).then((html) => {
-                        content.innerHTML = html;
-
-                        //Reinitialize Functions
-                        modal();
-                        deleteModal();
-                        searchModal();
-                        paginationModal();
-                      });
-                    }, 1000);
-                  }
-                });
-              }
-              bootstrap.Modal.getInstance(confirmModal).hide();
-            });
           }
         }
       }
@@ -975,7 +872,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             //Reinitialize Functions
             modal();
-            deleteModal();
             searchModal();
             paginationModal();
           });
@@ -1024,7 +920,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
               //Reinitialize Functions
               modal();
-              deleteModal();
               searchModal();
               paginationModal();
             });
@@ -1039,14 +934,14 @@ document.addEventListener("DOMContentLoaded", () => {
       function barang() {
         //Initialize document
         const barangModal = document.getElementById("barang");
-        const barangForm = barangModal.querySelector("form");
-        const namaBarang = barangForm.querySelector("#namaBarang");
-        const hargaPerKg = barangForm.querySelector("#hargaPerKg");
-        const buttonSave = barangModal.querySelector("button[type='submit']");
+        const barangForm = barangModal?.querySelector("form");
+        const namaBarang = barangForm?.querySelector("#namaBarang");
+        const hargaPerKg = barangForm?.querySelector("#hargaPerKg");
+        const buttonSave = barangModal?.querySelector("button[type='submit']");
 
         //Reset Modal Event
-        barangModal.removeEventListener("show.bs.modal", handleShowModal);
-        barangModal.addEventListener("show.bs.modal", handleShowModal);
+        barangModal?.removeEventListener("show.bs.modal", handleShowModal);
+        barangModal?.addEventListener("show.bs.modal", handleShowModal);
 
         let modalData = null;
         let modalTitle = null;
@@ -1165,11 +1060,11 @@ document.addEventListener("DOMContentLoaded", () => {
       function deleteBarang() {
         //Initialize document
         const confirmModal = document.getElementById("delete");
-        const buttonDelete = confirmModal.querySelector("button[type='submit']");
+        const buttonDelete = confirmModal?.querySelector("button[type='submit']");
 
         //Reset Modal Event
-        confirmModal.removeEventListener("show.bs.modal", handleShowModal);
-        confirmModal.addEventListener("show.bs.modal", handleShowModal);
+        confirmModal?.removeEventListener("show.bs.modal", handleShowModal);
+        confirmModal?.addEventListener("show.bs.modal", handleShowModal);
 
         let modalData = null;
         let modalTitle = null;
