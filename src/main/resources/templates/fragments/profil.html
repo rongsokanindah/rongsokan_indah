@@ -24,8 +24,8 @@
                     <th class="table-success w-25" th:text="${@textConstant.password}"></th>
                     <td class="small">
                         <a class="text-success text-decoration-none"
-                            th:text="${@textConstant.gantiPassword + '?'}"
-                            th:data-bs-data="${pengguna}"
+                            th:data-bs-data="${@parse.toJSON(pengguna)}"
+                            th:text="${@textConstant.gantiPassword}"
                             data-bs-target="#profil"
                             data-bs-toggle="modal"
                             href="">

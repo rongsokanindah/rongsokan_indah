@@ -626,6 +626,118 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    //~~~~~ Profil ~~~~~~~~~~~~~~~//
+    if (currentUrl === "/profil") {
+      profil();
+      function profil() {
+        //Initialize document
+        const profilModal = document.getElementById("profil");
+        const profilForm = profilModal.querySelector("form");
+        const password = profilForm.querySelector("#password");
+        const konfirmasiPassword = profilForm.querySelector("#konfirmasiPassword");
+        const buttonSave = profilModal.querySelector("button[type='submit']");
+
+        //Default
+        const patternPassword = password.getAttribute("pattern");
+
+        //Reset Modal Event
+        profilModal.removeEventListener("show.bs.modal", handleShowModal);
+        profilModal.addEventListener("show.bs.modal", handleShowModal);
+
+        let modalData = null;
+        let modalTitle = null;
+
+        function handleShowModal(event) {
+          const buttonShow = event.relatedTarget;
+          modalData = buttonShow.dataset.bsData;
+          modalTitle = buttonShow.textContent;
+
+          //Show Modal Title
+          profilModal.querySelector(".modal-title").textContent = modalTitle;
+
+          //Reset Modal Form
+          profilForm.reset();
+          profilForm.classList.remove("was-validated");
+          profilForm.querySelectorAll("input").forEach((input) => input.classList.remove("is-valid", "is-invalid"));
+
+          buttonSave.querySelector(".spinner").classList.add("d-none");
+          profilForm.querySelectorAll("input").forEach((input) => input.disabled = false);
+          profilModal.querySelectorAll("button").forEach((button) => button.disabled = false);
+
+          //Reset Input Event
+          profilForm.removeEventListener("input", handleInputChange);
+          profilForm.addEventListener("input", handleInputChange);
+
+          //Reset Save Event
+          buttonSave.removeEventListener("click", handleSaveClick);
+          buttonSave.addEventListener("click", handleSaveClick);
+        }
+
+        function handleInputChange(input) {
+          if (input.target == konfirmasiPassword) {
+            if (konfirmasiPassword.value == password.value) {
+              input.target.classList.remove("is-invalid");
+              input.target.classList.add("is-valid");
+            } else {
+              input.target.classList.remove("is-valid");
+              input.target.classList.add("is-invalid");
+            }
+          } else {
+            if (input.target.checkValidity()) {
+              input.target.classList.remove("is-invalid");
+              input.target.classList.add("is-valid");
+            } else {
+              input.target.classList.remove("is-valid");
+              input.target.classList.add("is-invalid");
+            }
+          }
+        }
+
+        function handleSaveClick(event) {
+          event.preventDefault();
+
+          const passwordValid = new RegExp(patternPassword).test(password.value);
+          const konfirmasiValid = konfirmasiPassword.value != "" && password.value == konfirmasiPassword.value;
+
+          if (passwordValid && konfirmasiValid) {
+            //Disabled All Inputs and Show Loading
+            profilModal.querySelectorAll("button").forEach((button) => button.disabled = true);
+            profilForm.querySelectorAll("input").forEach((input) => input.disabled = true);
+            buttonSave.querySelector(".spinner").classList.remove("d-none");
+
+            //Checking Data
+            const data = modalData ? JSON.parse(modalData) : {};
+
+            //Change Password
+            fetch("/api/pengguna", {
+              method: "PUT",
+              headers: {
+                [csrfHeader]: csrfToken,
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                id: data.id,
+                anakBuah: data.anakBuah,
+                password: password.value,
+              })
+            }).then((response) => {
+              if (response.ok) return response.json();
+            }).then(() => {
+              bootstrap.Modal.getInstance(profilModal).hide();
+            });
+          } else {
+            if (!passwordValid) {
+              password.classList.add("is-invalid");
+            }
+
+            if (!konfirmasiValid) {
+              konfirmasiPassword.classList.add("is-invalid");
+            }
+          }
+        }
+      }
+    }
+
     //~~~~~ Modal ~~~~~~~~~~~~~~~//
     if (currentUrl === "/modal") {
       modal();
