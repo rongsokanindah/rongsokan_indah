@@ -38,10 +38,10 @@
         <div th:if="${!#lists.isEmpty(dataAkun.content) && dataAkun.totalPages > 1}"
              th:insert="~{components/content-pagination::pagination(${dataAkun})}"></div>
 
-        <div th:insert="~{components/btn-add::add('#kelolaAkun', ${@textConstant.tambahAkun})}"></div>
+        <div th:replace="~{components/btn-add::add('#kelolaAkun', ${@textConstant.tambahAkun})}"></div>
 
-        <div th:insert="~{dialogs/kelola-akun::kelola-akun}"></div>
+        <div th:replace="~{dialogs/kelola-akun::kelola-akun}"></div>
 
-        <div th:insert="~{dialogs/confirmation::confirmation}"></div>
+        <div th:replace="~{dialogs/confirmation::confirmation}"></div>
     </th:block>
 </div>

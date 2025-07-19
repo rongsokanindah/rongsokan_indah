@@ -41,10 +41,10 @@
         <div th:if="${!#lists.isEmpty(dataAnakBuah.content) && dataAnakBuah.totalPages > 1}"
              th:insert="~{components/content-pagination::pagination(${dataAnakBuah})}"></div>
 
-        <div th:insert="~{components/btn-add::add('#anakBuah', ${@textConstant.tambahAnakBuah})}"></div>
+        <div th:replace="~{components/btn-add::add('#anakBuah', ${@textConstant.tambahAnakBuah})}"></div>
 
-        <div th:insert="~{dialogs/anak-buah::anak-buah}"></div>
+        <div th:replace="~{dialogs/anak-buah::anak-buah}"></div>
 
-        <div th:insert="~{dialogs/confirmation::confirmation}"></div>
+        <div th:replace="~{dialogs/confirmation::confirmation}"></div>
     </th:block>
 </div>
