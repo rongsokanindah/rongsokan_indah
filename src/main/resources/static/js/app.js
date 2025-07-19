@@ -399,8 +399,9 @@ document.addEventListener("DOMContentLoaded", () => {
               namaAnakBuah.classList.add("is-invalid");
             }
 
+            const patternUsername = username.getAttribute("pattern");
             const validationUsername = username.parentElement.querySelector("div");
-            if (validationUsername.textContent == "") {
+            if (validationUsername.textContent == "" || !new RegExp(patternUsername).test(username.value)) {
               validationUsername.textContent = validationUsername.dataset.error.split("~")[0];
               username.classList.add("is-invalid");
             }
@@ -774,6 +775,8 @@ document.addEventListener("DOMContentLoaded", () => {
           modalForm.querySelectorAll("input").forEach((input) => input.disabled = false);
           modalModal.querySelectorAll("button").forEach((button) => button.disabled = false);
           modalModal.querySelectorAll(".dropdown-menu").forEach((dropdown) => dropdown.remove());
+
+          anakBuah = null;
 
           //Data to Form
           if (modalData) {
@@ -1668,6 +1671,372 @@ document.addEventListener("DOMContentLoaded", () => {
               deleteAnakBuah();
               searchAnakBuah();
               paginationAnakBuah();
+            });
+          }
+        }
+      }
+    }
+
+    //~~~~~ Transaksi Masuk ~~~~~~~~~~~~~~~//
+    if (currentUrl === "/transaksi-masuk") {
+      transaksiMasuk();
+      function transaksiMasuk() {
+        //Initialize document
+        const transaksiMasukModal = document.getElementById("transaksiMasuk");
+        const transaksiMasukForm = transaksiMasukModal.querySelector("form");
+        const namaAnakBuah = transaksiMasukForm.querySelector("#namaAnakBuah");
+        const namaBarang = transaksiMasukForm.querySelector("#namaBarang");
+        const beratKg = transaksiMasukForm?.querySelector("#beratKg");
+        const buttonSave = transaksiMasukModal?.querySelector("button[type='submit']");
+
+        //Reset Modal Event
+        transaksiMasukModal?.removeEventListener("show.bs.modal", handleShowModal);
+        transaksiMasukModal?.addEventListener("show.bs.modal", handleShowModal);
+
+        let barang = null;
+        let modalData = null;
+        let modalTitle = null;
+
+        //Login Not As Admin
+        const dataAnakBuah = namaAnakBuah.parentElement.dataset.anakBuah;
+        let anakBuah = dataAnakBuah ? JSON.parse(dataAnakBuah) : null;
+
+        function handleShowModal(event) {
+          const buttonShow = event.relatedTarget;
+          modalData = buttonShow.dataset.bsData;
+          modalTitle = buttonShow.dataset.bsTitle;
+
+          //Show Modal Title
+          transaksiMasukModal.querySelector(".modal-title").textContent = modalTitle;
+
+          //Reset Modal Form
+          transaksiMasukForm.reset();
+          transaksiMasukForm.classList.remove("was-validated");
+          transaksiMasukForm.querySelectorAll("input").forEach((input) => input.classList.remove("is-valid", "is-invalid"));
+
+          buttonSave.querySelector(".spinner").classList.add("d-none");
+          transaksiMasukForm.querySelectorAll("input").forEach((input) => input.disabled = false);
+          transaksiMasukModal.querySelectorAll("button").forEach((button) => button.disabled = false);
+          transaksiMasukForm.querySelectorAll(".dropdown-menu").forEach((dropdown) => dropdown.remove());
+
+          barang = null;
+          anakBuah = dataAnakBuah ? JSON.parse(dataAnakBuah) : null;
+          namaAnakBuah.value = anakBuah ? anakBuah.nama : "";
+
+          //Data to Form
+          if (modalData) {
+            const transaksiMasuk = JSON.parse(modalData);
+            namaAnakBuah.value = transaksiMasuk.anakBuah.nama;
+            namaBarang.value = transaksiMasuk.barang.namaBarang;
+            beratKg.value = transaksiMasuk.beratKg;
+
+            anakBuah = transaksiMasuk.anakBuah;
+            barang = transaksiMasuk.barang;
+          }
+
+          //Reset Input Event
+          transaksiMasukForm.removeEventListener("input", handleInputChange);
+          transaksiMasukForm.addEventListener("input", handleInputChange);
+
+          //Reset Save Event
+          buttonSave.removeEventListener("click", handleSaveClick);
+          buttonSave.addEventListener("click", handleSaveClick);
+        }
+
+        function handleInputChange(input) {
+          if (input.target == namaAnakBuah) {
+            input.target.classList.remove("is-valid");
+            input.target.classList.add("is-invalid");
+            anakBuah = null;
+
+            if (namaAnakBuah.value != "") {
+              //Get Data Dropdown
+              fetch(`/api/anak-buah?cari=${namaAnakBuah.value}&sort=nama`, {
+                method: "GET",
+                headers: { [csrfHeader]: csrfToken }
+              }).then((response) => {
+                if (response.ok) return response.json();
+              }).then((dataResponse) => {
+                //Reset List
+                transaksiMasukModal.querySelectorAll(".dropdown-menu").forEach((dropdown) => dropdown.remove());
+
+                //Create Dropdown List
+                if (dataResponse.content.length > 0) {
+                  //Create Dropdown Menu
+                  const ul = document.createElement("ul");
+                  ul.style.width = `${namaAnakBuah.offsetWidth}px`;
+                  ul.className = "dropdown-menu show py-0";
+                  ul.style.marginTop = "-25px";
+
+                  //Create Dropdown Item
+                  dataResponse.content.forEach((dataAnakBuah) => {
+                    const li = document.createElement("li");
+                    const value = new RegExp(namaAnakBuah.value, "gi");
+                    const bold = match => `<strong>${match}</strong>`;
+
+                    li.className = "dropdown-item small rounded";
+                    li.innerHTML = dataAnakBuah.nama.replace(value, bold);
+
+                    li.addEventListener("click", () => {
+                      namaAnakBuah.value = dataAnakBuah.nama
+                      anakBuah = dataAnakBuah;
+
+                      input.target.classList.remove("is-invalid");
+                      input.target.classList.add("is-valid");
+                      ul.remove();
+                    });
+                    ul.appendChild(li);
+                  });
+                  namaAnakBuah.parentElement.appendChild(ul);
+                }
+              });
+            } else {
+              transaksiMasukModal.querySelectorAll(".dropdown-menu").forEach((dropdown) => dropdown.remove());
+            }
+          } else if (input.target == namaBarang) {
+            input.target.classList.remove("is-valid");
+            input.target.classList.add("is-invalid");
+            barang = null;
+
+            if (namaBarang.value != "") {
+              //Get Data Dropdown
+              fetch(`/api/barang?cari=${namaBarang.value}&sort=namaBarang`, {
+                method: "GET",
+                headers: { [csrfHeader]: csrfToken }
+              }).then((response) => {
+                if (response.ok) return response.json();
+              }).then((dataResponse) => {
+                //Reset List
+                transaksiMasukModal.querySelectorAll(".dropdown-menu").forEach((dropdown) => dropdown.remove());
+
+                //Create Dropdown List
+                if (dataResponse.content.length > 0) {
+                  //Create Dropdown Menu
+                  const ul = document.createElement("ul");
+                  ul.style.width = `${namaBarang.offsetWidth}px`;
+                  ul.className = "dropdown-menu show py-0";
+                  ul.style.marginTop = "-25px";
+
+                  //Create Dropdown Item
+                  dataResponse.content.forEach((dataBarang) => {
+                    const li = document.createElement("li");
+                    const value = new RegExp(namaBarang.value, "gi");
+                    const bold = match => `<strong>${match}</strong>`;
+
+                    li.className = "dropdown-item small rounded";
+                    li.innerHTML = dataBarang.namaBarang.replace(value, bold);
+
+                    li.addEventListener("click", () => {
+                      namaBarang.value = dataBarang.namaBarang;
+                      barang = dataBarang;
+
+                      input.target.classList.remove("is-invalid");
+                      input.target.classList.add("is-valid");
+                      ul.remove();
+                    });
+                    ul.appendChild(li);
+                  });
+                  namaBarang.parentElement.appendChild(ul);
+                }
+              });
+            } else {
+              transaksiMasukModal.querySelectorAll(".dropdown-menu").forEach((dropdown) => dropdown.remove());
+            }
+          } else {
+            if (input.target.checkValidity()) {
+              input.target.classList.remove("is-invalid");
+              input.target.classList.add("is-valid");
+            } else {
+              input.target.classList.remove("is-valid");
+              input.target.classList.add("is-invalid");
+            }
+          }
+        }
+
+        function handleSaveClick(event) {
+          event.preventDefault();
+
+          if (transaksiMasukForm.checkValidity() && anakBuah != null && barang != null) {
+            //Disabled All Inputs and Show Loading
+            transaksiMasukModal.querySelectorAll("button").forEach((button) => button.disabled = true);
+            transaksiMasukForm.querySelectorAll("input").forEach((input) => input.disabled = true);
+            buttonSave.querySelector(".spinner").classList.remove("d-none");
+
+            //Checking Data
+            const edit = modalData ? true : false;
+            const data = edit ? JSON.parse(modalData) : {};
+
+            //Add or Edit Transaksi Masuk
+            fetch("/api/transaksi-masuk", {
+              method: edit ? "PUT" : "POST",
+              headers: {
+                [csrfHeader]: csrfToken,
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                id: edit ? data.id : "",
+                totalHarga: beratKg.value * barang.hargaPerKg,
+                beratKg: beratKg.value,
+                anakBuah: anakBuah,
+                barang: barang,
+              })
+            }).then((response) => {
+              if (response.ok) return response.json();
+            }).then((dataResponse) => {
+              const search = getParam("cari");
+              const page = getParam("page");
+
+              //Reload Content
+              fetch(edit ? `/transaksi-masuk?cari=${search}&page=${page}` : "/transaksi-masuk", {
+                method: "POST",
+                headers: { [csrfHeader]: csrfToken }
+              }).then((response) => {
+                if (response.ok) return response.text();
+              }).then((html) => {
+                content.innerHTML = html;
+
+                //Clear Params If Not Editing
+                if (!edit) deleteAllParams();
+
+                //Reinitialize Functions
+                transaksiMasuk();
+                searchTransaksiMasuk();
+                paginationTransaksiMasuk();
+
+                //Show Effect Changed
+                const targetID = dataResponse.id;
+                const tableBody = content.querySelector("tbody");
+
+                if (tableBody) {
+                  tableBody.querySelectorAll("tr").forEach((row) => {
+                    if (row.dataset.id === targetID) {
+                      row.classList.add(edit ? "row-edit-data" : "row-add-data");
+                      setTimeout(() => row.className = "", 1500);
+                    }
+                  });
+                }
+              });
+              bootstrap.Modal.getInstance(transaksiMasukModal).hide();
+            });
+          } else {
+            if (anakBuah == null) namaAnakBuah.classList.add("is-invalid");
+            if (barang == null) namaBarang.classList.add("is-invalid");
+            if (beratKg.value < 1) beratKg.classList.add("is-invalid");
+          }
+        }
+      }
+
+      searchTransaksiMasuk();
+      function searchTransaksiMasuk() {
+        //Initialize document
+        const buttonSearchDate = content.querySelector(".search button[type='custom']");
+        const buttonSearch = content.querySelector(".search button[type='button']");
+        const textSearch = content.querySelector(".search input");
+
+        //Params to Input Search
+        textSearch.value = getParam("cari");
+
+        //Show Date Picker
+        flatpickr(buttonSearchDate, {
+          locale: "id",
+          dateFormat: "d/m/Y",
+          onReady: (_, __, instance) => {
+            const month = instance.monthsDropdownContainer;
+            const year = instance.currentYearElement;
+
+            const textMonthYear = document.createElement("div");
+            textMonthYear.className = "custom-month-year";
+            updateText();
+
+            month.classList.add("d-none");
+            year.parentElement.classList.add("d-none");
+            month.parentElement.appendChild(textMonthYear);
+
+            instance.config.onMonthChange.push(updateText);
+            instance.config.onYearChange.push(updateText);
+
+            function updateText() {
+              const year = instance.currentYear;
+              const month = instance.l10n.months.longhand[instance.currentMonth];
+              textMonthYear.textContent = `${month} ${year}`;
+            }
+          },
+          onChange: (_, selected, __) => {
+            textSearch.value = selected;
+            handleSearchClick();
+          },
+        });
+
+        //Reset Search Event
+        buttonSearch.removeEventListener("click", handleSearchClick);
+        buttonSearch.addEventListener("click", handleSearchClick);
+
+        function handleSearchClick() {
+          //Get Content
+          fetch(`/transaksi-masuk?cari=${textSearch.value}`, {
+            method: "POST",
+            headers: { [csrfHeader]: csrfToken }
+          }).then((response) => {
+            if (response.ok) return response.text();
+          }).then((html) => {
+            content.innerHTML = html;
+
+            //Update Params
+            deleteAllParams();
+            addParam("cari", textSearch.value);
+
+            //Reinitialize Functions
+            transaksiMasuk();
+            searchTransaksiMasuk();
+            paginationTransaksiMasuk();
+          });
+        }
+      }
+
+      paginationTransaksiMasuk();
+      function paginationTransaksiMasuk() {
+        //Initialize document
+        const pagination = content.querySelector(".pagination");
+
+        //Check Pagination Displayed
+        if (pagination) {
+          //Reset Page Event
+          pagination.removeEventListener("click", handlePageClick);
+          pagination.addEventListener("click", handlePageClick);
+
+          //Back or Forward Clicked
+          window.addEventListener("popstate", () => location.reload());
+        }
+
+        function handlePageClick(event) {
+          const target = event.target.closest(".page-item");
+          const disabled = target.classList.contains("disabled");
+          const active = target.classList.contains("active");
+          const dots = target.classList.contains("dots");
+
+          //Checked Not Disabled or Not Active or Not Dots
+          if (!disabled && !active && !dots) {
+            const pageLink = target.querySelector("a");
+            const page = pageLink.dataset.page;
+            const hasSearch = hasParam("cari");
+            const search = getParam("cari");
+
+            //Get Content
+            fetch(hasSearch ? `/transaksi-masuk?cari=${search}&page=${page}` : `/transaksi-masuk?page=${page}`, {
+              method: "POST",
+              headers: { [csrfHeader]: csrfToken }
+            }).then((response) => {
+              if (response.ok) return response.text();
+            }).then((html) => {
+              content.innerHTML = html;
+
+              //Add Param
+              addParam("page", page);
+
+              //Reinitialize Functions
+              transaksiMasuk();
+              searchTransaksiMasuk();
+              paginationTransaksiMasuk();
             });
           }
         }

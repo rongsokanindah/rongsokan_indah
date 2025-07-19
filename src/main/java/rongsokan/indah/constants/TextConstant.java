@@ -70,7 +70,6 @@ public class TextConstant {
     private final String tanggalDiBerikan = "Tanggal di Berikan";
 
     private final String editModal = "Edit Modal";
-    private final String hapusModal = "Hapus Modal";
     private final String tambahModal = "Tambah Modal";
 
     private final String wajibMemilihAnakBuah = "Wajib diisi dengan memilih Anak Buah.";
@@ -98,4 +97,20 @@ public class TextConstant {
     private final String dataProfil = "Data Profil";
     private final String gantiPassword = "Ganti Password";
     private final String deskripsiProfil = "Menampilkan informasi profil Anda.";
+
+    private final String dataTransaksiMasuk = "Data Transaksi Masuk";
+    private final String cariTransaksiMasuk = "Cari Transaksi Masuk";
+    private final String deskripsiTransaksiMasukAnakBuah = "Daftar semua transaksi masuk yang telah Anda buat.";
+    private final String deskripsiTransaksiMasukAdmin = "Daftar semua transaksi masuk yang telah dibuat Admin atau Anak Buah.";
+
+    private final String beratKg = "Berat (Kg)";
+    private final String totalHarga = "Total Harga";
+    private final String tanggalTransaksi = "Tanggal Transaksi";
+
+    private final String editTransaksi = "Edit Transaksi";
+    private final String hapusTransaksi = "Hapus Transaksi";
+    private final String tambahTransaksi = "Tambah Transaksi";
+
+    private final String wajibMemilihBarang = "Wajib diisi dengan memilih Barang.";
+    private final String wajibMin1Kg = "Wajib diisi dengan minimal satu Kilogram.";
 }

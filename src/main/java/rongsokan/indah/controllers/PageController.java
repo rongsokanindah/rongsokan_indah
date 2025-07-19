@@ -102,4 +102,20 @@ public class PageController {
             @PageableDefault(size = 5, sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
         return pageService.postAnakBuahPage(model, cari, pageable);
     }
+
+    @GetMapping("/transaksi-masuk")
+    public String getTransaksiMasukPage(
+            Model model,
+            @RequestParam(required = false, defaultValue = "") String cari,
+            @PageableDefault(size = 5, sort = "tanggal", direction = Direction.DESC) Pageable pageable) {
+        return pageService.getTransaksiMasukPage(model, cari, pageable);
+    }
+
+    @PostMapping("/transaksi-masuk")
+    public String postTransaksiMasukPage(
+            Model model,
+            @RequestParam(required = false, defaultValue = "") String cari,
+            @PageableDefault(size = 5, sort = "tanggal", direction = Direction.DESC) Pageable pageable) {
+        return pageService.postTransaksiMasukPage(model, cari, pageable);
+    }
 }

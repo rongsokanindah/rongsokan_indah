@@ -13,8 +13,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 @Data
@@ -25,27 +25,24 @@ public class TransaksiMasuk {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @NotBlank
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "anak_buah_id", nullable = false)
     private AnakBuah anakBuah;
 
-    @NotBlank
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "barang_id", nullable = false)
     private Barang barang;
 
-    @NotBlank
-    @PositiveOrZero
+    @Positive
     @Column(precision = 10, scale = 2, nullable = false)
     private BigDecimal beratKg;
 
-    @NotBlank
-    @PositiveOrZero
+    @Positive
     @Column(precision = 10, scale = 2, nullable = false)
     private BigDecimal totalHarga;
 
-    @NotBlank
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime tanggal;

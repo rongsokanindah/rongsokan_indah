@@ -25,12 +25,14 @@
           <i class="bi bi-people fs-5"></i>
           <span class="fs-6 mt-1 ms-2 text-nowrap" th:text="${@textConstant.anakBuah}"></span>
         </a>
+      </th:block>
 
-        <a class="d-flex text-white px-4 py-2 text-decoration-none" href="/transaksi-masuk">
-          <i class="bi bi-box-arrow-in-down fs-5"></i>
-          <span class="fs-6 mt-1 ms-2 text-nowrap" th:text="${@textConstant.transaksiMasuk}"></span>
-        </a>
+      <a class="d-flex text-white px-4 py-2 text-decoration-none" href="/transaksi-masuk">
+        <i class="bi bi-box-arrow-in-down fs-5"></i>
+        <span class="fs-6 mt-1 ms-2 text-nowrap" th:text="${@textConstant.transaksiMasuk}"></span>
+      </a>
 
+      <th:block th:if="${pengguna.role.name() == 'ADMIN'}">
         <a class="d-flex text-white px-4 py-2 text-decoration-none" href="/transaksi-keluar">
           <i class="bi bi-box-arrow-up fs-5"></i>
           <span class="fs-6 mt-1 ms-2 text-nowrap" th:text="${@textConstant.transaksiKeluar}"></span>
