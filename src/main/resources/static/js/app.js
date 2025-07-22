@@ -1686,12 +1686,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const transaksiMasukForm = transaksiMasukModal.querySelector("form");
         const namaAnakBuah = transaksiMasukForm.querySelector("#namaAnakBuah");
         const namaBarang = transaksiMasukForm.querySelector("#namaBarang");
-        const beratKg = transaksiMasukForm?.querySelector("#beratKg");
-        const buttonSave = transaksiMasukModal?.querySelector("button[type='submit']");
+        const beratKg = transaksiMasukForm.querySelector("#beratKg");
+        const buttonSave = transaksiMasukModal.querySelector("button[type='submit']");
 
         //Reset Modal Event
-        transaksiMasukModal?.removeEventListener("show.bs.modal", handleShowModal);
-        transaksiMasukModal?.addEventListener("show.bs.modal", handleShowModal);
+        transaksiMasukModal.removeEventListener("show.bs.modal", handleShowModal);
+        transaksiMasukModal.addEventListener("show.bs.modal", handleShowModal);
 
         let barang = null;
         let modalData = null;
@@ -2037,6 +2037,314 @@ document.addEventListener("DOMContentLoaded", () => {
               transaksiMasuk();
               searchTransaksiMasuk();
               paginationTransaksiMasuk();
+            });
+          }
+        }
+      }
+    }
+
+    //~~~~~ Transaksi Keluar ~~~~~~~~~~~~~~~//
+    if (currentUrl === "/transaksi-keluar") {
+      transaksiKeluar();
+      function transaksiKeluar() {
+        //Initialize document
+        const transaksiKeluarModal = document.getElementById("transaksiKeluar");
+        const transaksiKeluarForm = transaksiKeluarModal.querySelector("form");
+        const namaBarang = transaksiKeluarForm.querySelector("#namaBarang");
+        const beratKg = transaksiKeluarForm.querySelector("#beratKg");
+        const hargaJual = transaksiKeluarForm.querySelector("#hargaJual");
+        const buttonSave = transaksiKeluarModal.querySelector("button[type='submit']");
+
+        //Reset Modal Event
+        transaksiKeluarModal.removeEventListener("show.bs.modal", handleShowModal);
+        transaksiKeluarModal.addEventListener("show.bs.modal", handleShowModal);
+
+        let barang = null;
+        let modalData = null;
+        let modalTitle = null;
+
+        function handleShowModal(event) {
+          const buttonShow = event.relatedTarget;
+          modalData = buttonShow.dataset.bsData;
+          modalTitle = buttonShow.dataset.bsTitle;
+
+          //Show Modal Title
+          transaksiKeluarModal.querySelector(".modal-title").textContent = modalTitle;
+
+          //Reset Modal Form
+          transaksiKeluarForm.reset();
+          transaksiKeluarForm.classList.remove("was-validated");
+          transaksiKeluarForm.querySelectorAll("input").forEach((input) => input.classList.remove("is-valid", "is-invalid"));
+
+          buttonSave.querySelector(".spinner").classList.add("d-none");
+          transaksiKeluarForm.querySelectorAll("input").forEach((input) => input.disabled = false);
+          transaksiKeluarModal.querySelectorAll("button").forEach((button) => button.disabled = false);
+          transaksiKeluarForm.querySelectorAll(".dropdown-menu").forEach((dropdown) => dropdown.remove());
+
+          barang = null;
+
+          //Data to Form
+          if (modalData) {
+            const transaksiKeluar = JSON.parse(modalData);
+            namaBarang.value = transaksiKeluar.barang.namaBarang;
+            hargaJual.value = transaksiKeluar.hargaJual;
+            beratKg.value = transaksiKeluar.beratKg;
+            barang = transaksiKeluar.barang;
+          }
+
+          //Reset Input Event
+          transaksiKeluarForm.removeEventListener("input", handleInputChange);
+          transaksiKeluarForm.addEventListener("input", handleInputChange);
+
+          //Reset Save Event
+          buttonSave.removeEventListener("click", handleSaveClick);
+          buttonSave.addEventListener("click", handleSaveClick);
+        }
+
+        function handleInputChange(input) {
+          if (input.target == namaBarang) {
+            input.target.classList.remove("is-valid");
+            input.target.classList.add("is-invalid");
+            barang = null;
+
+            if (namaBarang.value != "") {
+              //Get Data Dropdown
+              fetch(`/api/barang?cari=${namaBarang.value}&sort=namaBarang`, {
+                method: "GET",
+                headers: { [csrfHeader]: csrfToken }
+              }).then((response) => {
+                if (response.ok) return response.json();
+              }).then((dataResponse) => {
+                //Reset List
+                transaksiKeluarModal.querySelectorAll(".dropdown-menu").forEach((dropdown) => dropdown.remove());
+
+                //Create Dropdown List
+                if (dataResponse.content.length > 0) {
+                  //Create Dropdown Menu
+                  const ul = document.createElement("ul");
+                  ul.style.width = `${namaBarang.offsetWidth}px`;
+                  ul.className = "dropdown-menu show py-0";
+                  ul.style.marginTop = "-25px";
+
+                  //Create Dropdown Item
+                  dataResponse.content.forEach((dataBarang) => {
+                    const li = document.createElement("li");
+                    const value = new RegExp(namaBarang.value, "gi");
+                    const bold = match => `<strong>${match}</strong>`;
+
+                    li.className = "dropdown-item small rounded";
+                    li.innerHTML = dataBarang.namaBarang.replace(value, bold);
+
+                    li.addEventListener("click", () => {
+                      namaBarang.value = dataBarang.namaBarang;
+                      barang = dataBarang;
+
+                      input.target.classList.remove("is-invalid");
+                      input.target.classList.add("is-valid");
+                      ul.remove();
+                    });
+                    ul.appendChild(li);
+                  });
+                  namaBarang.parentElement.appendChild(ul);
+                }
+              });
+            } else {
+              transaksiKeluarModal.querySelectorAll(".dropdown-menu").forEach((dropdown) => dropdown.remove());
+            }
+          } else {
+            if (input.target.checkValidity()) {
+              input.target.classList.remove("is-invalid");
+              input.target.classList.add("is-valid");
+            } else {
+              input.target.classList.remove("is-valid");
+              input.target.classList.add("is-invalid");
+            }
+          }
+        }
+
+        function handleSaveClick(event) {
+          event.preventDefault();
+
+          if (transaksiKeluarForm.checkValidity() && barang != null) {
+            //Disabled All Inputs and Show Loading
+            transaksiKeluarModal.querySelectorAll("button").forEach((button) => button.disabled = true);
+            transaksiKeluarForm.querySelectorAll("input").forEach((input) => input.disabled = true);
+            buttonSave.querySelector(".spinner").classList.remove("d-none");
+
+            //Checking Data
+            const edit = modalData ? true : false;
+            const data = edit ? JSON.parse(modalData) : {};
+
+            //Add or Edit Transaksi Keluar
+            fetch("/api/transaksi-keluar", {
+              method: edit ? "PUT" : "POST",
+              headers: {
+                [csrfHeader]: csrfToken,
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                id: edit ? data.id : "",
+                hargaJual: hargaJual.value,
+                beratKg: beratKg.value,
+                barang: barang,
+              })
+            }).then((response) => {
+              if (response.ok) return response.json();
+            }).then((dataResponse) => {
+              const search = getParam("cari");
+              const page = getParam("page");
+
+              //Reload Content
+              fetch(edit ? `/transaksi-keluar?cari=${search}&page=${page}` : "/transaksi-keluar", {
+                method: "POST",
+                headers: { [csrfHeader]: csrfToken }
+              }).then((response) => {
+                if (response.ok) return response.text();
+              }).then((html) => {
+                content.innerHTML = html;
+
+                //Clear Params If Not Editing
+                if (!edit) deleteAllParams();
+
+                //Reinitialize Functions
+                transaksiKeluar();
+                searchTransaksiKeluar();
+                paginationTransaksiKeluar();
+
+                //Show Effect Changed
+                const targetID = dataResponse.id;
+                const tableBody = content.querySelector("tbody");
+
+                if (tableBody) {
+                  tableBody.querySelectorAll("tr").forEach((row) => {
+                    if (row.dataset.id === targetID) {
+                      row.classList.add(edit ? "row-edit-data" : "row-add-data");
+                      setTimeout(() => row.className = "", 1500);
+                    }
+                  });
+                }
+              });
+              bootstrap.Modal.getInstance(transaksiKeluarModal).hide();
+            });
+          } else {
+            if (barang == null) namaBarang.classList.add("is-invalid");
+            if (beratKg.value < 1) beratKg.classList.add("is-invalid");
+            if (hargaJual.value == "" || hargaJual.value < 0) hargaJual.classList.add("is-invalid");
+          }
+        }
+      }
+
+      searchTransaksiKeluar();
+      function searchTransaksiKeluar() {
+        //Initialize document
+        const buttonSearchDate = content.querySelector(".search button[type='custom']");
+        const buttonSearch = content.querySelector(".search button[type='button']");
+        const textSearch = content.querySelector(".search input");
+
+        //Params to Input Search
+        textSearch.value = getParam("cari");
+
+        //Show Date Picker
+        flatpickr(buttonSearchDate, {
+          locale: "id",
+          dateFormat: "d/m/Y",
+          onReady: (_, __, instance) => {
+            const month = instance.monthsDropdownContainer;
+            const year = instance.currentYearElement;
+
+            const textMonthYear = document.createElement("div");
+            textMonthYear.className = "custom-month-year";
+            updateText();
+
+            month.classList.add("d-none");
+            year.parentElement.classList.add("d-none");
+            month.parentElement.appendChild(textMonthYear);
+
+            instance.config.onMonthChange.push(updateText);
+            instance.config.onYearChange.push(updateText);
+
+            function updateText() {
+              const year = instance.currentYear;
+              const month = instance.l10n.months.longhand[instance.currentMonth];
+              textMonthYear.textContent = `${month} ${year}`;
+            }
+          },
+          onChange: (_, selected, __) => {
+            textSearch.value = selected;
+            handleSearchClick();
+          },
+        });
+
+        //Reset Search Event
+        buttonSearch.removeEventListener("click", handleSearchClick);
+        buttonSearch.addEventListener("click", handleSearchClick);
+
+        function handleSearchClick() {
+          //Get Content
+          fetch(`/transaksi-keluar?cari=${textSearch.value}`, {
+            method: "POST",
+            headers: { [csrfHeader]: csrfToken }
+          }).then((response) => {
+            if (response.ok) return response.text();
+          }).then((html) => {
+            content.innerHTML = html;
+
+            //Update Params
+            deleteAllParams();
+            addParam("cari", textSearch.value);
+
+            //Reinitialize Functions
+            transaksiKeluar();
+            searchTransaksiKeluar();
+            paginationTransaksiKeluar();
+          });
+        }
+      }
+
+      paginationTransaksiKeluar();
+      function paginationTransaksiKeluar() {
+        //Initialize document
+        const pagination = content.querySelector(".pagination");
+
+        //Check Pagination Displayed
+        if (pagination) {
+          //Reset Page Event
+          pagination.removeEventListener("click", handlePageClick);
+          pagination.addEventListener("click", handlePageClick);
+
+          //Back or Forward Clicked
+          window.addEventListener("popstate", () => location.reload());
+        }
+
+        function handlePageClick(event) {
+          const target = event.target.closest(".page-item");
+          const disabled = target.classList.contains("disabled");
+          const active = target.classList.contains("active");
+          const dots = target.classList.contains("dots");
+
+          //Checked Not Disabled or Not Active or Not Dots
+          if (!disabled && !active && !dots) {
+            const pageLink = target.querySelector("a");
+            const page = pageLink.dataset.page;
+            const hasSearch = hasParam("cari");
+            const search = getParam("cari");
+
+            //Get Content
+            fetch(hasSearch ? `/transaksi-keluar?cari=${search}&page=${page}` : `/transaksi-keluar?page=${page}`, {
+              method: "POST",
+              headers: { [csrfHeader]: csrfToken }
+            }).then((response) => {
+              if (response.ok) return response.text();
+            }).then((html) => {
+              content.innerHTML = html;
+
+              //Add Param
+              addParam("page", page);
+
+              //Reinitialize Functions
+              transaksiKeluar();
+              searchTransaksiKeluar();
+              paginationTransaksiKeluar();
             });
           }
         }

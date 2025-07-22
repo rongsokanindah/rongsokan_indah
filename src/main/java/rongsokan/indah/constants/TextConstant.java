@@ -112,5 +112,11 @@ public class TextConstant {
     private final String tambahTransaksi = "Tambah Transaksi";
 
     private final String wajibMemilihBarang = "Wajib diisi dengan memilih Barang.";
-    private final String wajibMin1Kg = "Wajib diisi dengan minimal satu Kilogram.";
+    private final String wajibMin1Kg = "Wajib diisi dengan minimal satu kilogram.";
+
+    private final String dataTransaksiKeluar = "Data Transaksi Keluar";
+    private final String cariTransaksiKeluar = "Cari Transaksi Keluar";
+    private final String deskripsiTransaksiKeluar = "Daftar semua transaksi keluar yang telah dibuat.";
+
+    private final String hargaJual = "Harga Jual";
 }

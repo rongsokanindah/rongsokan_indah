@@ -10,6 +10,7 @@
             <th:block th:if="${pengguna.role.name() == 'ADMIN'}">
                 <div th:case="'/kelola-akun'" th:insert="~{fragments/kelola-akun::kelola-akun}"></div>
                 <div th:case="'/anak-buah'" th:insert="~{fragments/anak-buah::anak-buah}"></div>
+                <div th:case="'/transaksi-keluar'" th:insert="~{fragments/transaksi-keluar::transaksi-keluar}"></div>
             </th:block>
 
             <th:block th:unless="${pengguna.role.name() == 'ADMIN'}">

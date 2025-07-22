@@ -1,0 +1,43 @@
+<div id="transaksiKeluar" class="modal fade" data-bs-backdrop="static" th:fragment="transaksi-keluar">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div th:replace="~{components/modal-header::modal-header('bi-box-arrow-up')}"></div>
+
+            <div class="modal-body">
+                <form novalidate>
+                    <div class="mb-3">
+                        <label for="namaBarang" class="form-label fs-6">
+                            <span th:text="${@textConstant.barang}"></span>
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input id="namaBarang" type="text" class="form-control form-control-sm" autocomplete="off" required/>
+                        <div class="invalid-feedback small" th:text="${@textConstant.wajibMemilihBarang}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="beratKg" class="form-label fs-6">
+                            <span th:text="${@textConstant.beratKg}"></span>
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input id="beratKg" type="number" class="form-control form-control-sm" required min="1"/>
+                        <div class="invalid-feedback small" th:text="${@textConstant.wajibMin1Kg}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="hargaJual" class="form-label fs-6">
+                            <span th:text="${@textConstant.hargaJual}"></span>
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input id="hargaJual" type="number" class="form-control form-control-sm" required min="0"/>
+                        <div class="invalid-feedback small" th:text="${@textConstant.wajibTidakNegatif}"></div>
+                    </div>
+                </form>
+            </div>
+
+            <div th:replace="~{components/modal-footer::modal-footer(${@textConstant.simpan}, 'btn-success')}"></div>
+        </div>
+    </div>
+</div>

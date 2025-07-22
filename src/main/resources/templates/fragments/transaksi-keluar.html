@@ -1,0 +1,46 @@
+<div class="p-3 content" th:fragment="transaksi-keluar">
+    <th:block th:fragment="reload">
+        <div th:replace="~{components/content-title::title(bi-box-arrow-up,
+                        ${@textConstant.dataTransaksiKeluar}, ${@textConstant.deskripsiTransaksiKeluar})}"></div>
+
+        <div th:replace="~{components/content-search::search(${@textConstant.cariTransaksiKeluar}, true)}"></div>
+
+        <div th:if="${#lists.isEmpty(dataTransaksiKeluar.content)}"
+             th:insert="~{components/no-data::no-data}"></div>
+
+        <div class="mt-3" th:if="${!#lists.isEmpty(dataTransaksiKeluar.content)}">
+            <table class="table table-sm table-bordered align-middle small">
+                <thead class="table-success">
+                    <tr>
+                        <th th:text="${@textConstant.no}"></th>
+                        <th th:text="${@textConstant.barang}"></th>
+                        <th th:text="${@textConstant.beratKg}"></th>
+                        <th th:text="${@textConstant.hargaJual}"></th>
+                        <th th:text="${@textConstant.tanggalTransaksi}"></th>
+                        <th th:text="${@textConstant.aksi}"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="transaksiKeluar, iterStat : ${dataTransaksiKeluar.content}"
+                        th:data-id="${transaksiKeluar.id}">
+                        <td th:text="${iterStat.index + 1}"></td>
+                        <td th:text="${transaksiKeluar.barang.namaBarang}"></td>
+                        <td th:text="${transaksiKeluar.beratKg.intValue()}"></td>
+                        <td th:text="${'Rp' + #numbers.formatInteger(transaksiKeluar.hargaJual, 0, 'POINT')}"></td>
+                        <td th:text="${#temporals.format(transaksiKeluar.tanggal, 'dd MMMM yyyy HH:mm')}"></td>
+                        <td>
+                            <button th:replace="~{components/btn-edit::edit('#transaksiKeluar', ${@textConstant.editTransaksi}, ${transaksiKeluar})}"></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div th:if="${!#lists.isEmpty(dataTransaksiKeluar.content) && dataTransaksiKeluar.totalPages > 1}"
+             th:insert="~{components/content-pagination::pagination(${dataTransaksiKeluar})}"></div>
+
+        <div th:replace="~{components/btn-add::add('#transaksiKeluar', ${@textConstant.tambahTransaksi})}"></div>
+
+        <div th:replace="~{dialogs/transaksi-keluar::transaksi-keluar}"></div>
+    </th:block>
+</div>

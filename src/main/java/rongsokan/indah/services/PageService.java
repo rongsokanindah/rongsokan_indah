@@ -36,6 +36,9 @@ public class PageService {
     @Autowired
     private TransaksiMasukService transaksiMasukService;
 
+    @Autowired
+    private TransaksiKeluarService transaksiKeluarService;
+
     public String getLoginPage(HttpServletRequest request, Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
@@ -120,5 +123,16 @@ public class PageService {
     public String postTransaksiMasukPage(Model model, String cari, Pageable pageable) {
         model.addAttribute(attribute.getTransaksiMasuk(), transaksiMasukService.getTransaksiMasuk(cari, pageable));
         return "fragments/transaksi-masuk::reload";
+    }
+
+    public String getTransaksiKeluarPage(Model model, String cari, Pageable pageable) {
+        model.addAttribute(attribute.getTransaksiKeluar(), transaksiKeluarService.getTransaksiKeluar(cari, pageable));
+        model.addAttribute(attribute.getPath(), "/transaksi-keluar");
+        return "pages/dashboard";
+    }
+
+    public String postTransaksiKeluarPage(Model model, String cari, Pageable pageable) {
+        model.addAttribute(attribute.getTransaksiKeluar(), transaksiKeluarService.getTransaksiKeluar(cari, pageable));
+        return "fragments/transaksi-keluar::reload";
     }
 }
