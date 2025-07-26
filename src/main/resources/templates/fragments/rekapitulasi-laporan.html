@@ -41,11 +41,11 @@
             </div>
         </div>
 
-        <div th:if="${dataModal == null && dataTransaksiMasuk == null && (dataTransaksiKeluar == null || pengguna.role.name() != 'ADMIN')}"
+        <div th:if="${(dataModal == null or #lists.isEmpty(dataModal)) and (dataTransaksiMasuk == null or #lists.isEmpty(dataTransaksiMasuk)) and (pengguna.role.name() == 'ADMIN' and (dataTransaksiKeluar == null or #lists.isEmpty(dataTransaksiKeluar)))}"
              th:insert="~{components/no-data::no-data}"></div>
 
         <div class="mt-3"
-            th:if="${dataModal != null || dataTransaksiMasuk != null || (dataTransaksiKeluar != null && pengguna.role.name() == 'ADMIN')}">
+            th:if="${(dataModal != null and !#lists.isEmpty(dataModal)) or (dataTransaksiMasuk != null and !#lists.isEmpty(dataTransaksiMasuk)) or (pengguna.role.name() == 'ADMIN' and dataTransaksiKeluar != null and !#lists.isEmpty(dataTransaksiKeluar))}">
             <div class="d-flex justify-content-between mb-2">
                 <div class="d-flex flex-column align-items-start">
                     <button class="btn btn-sm btn-outline-danger pdf">
