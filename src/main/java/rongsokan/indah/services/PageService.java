@@ -83,6 +83,17 @@ public class PageService {
         return "pages/dashboard";
     }
 
+    public String getDashboardPage(Model model) {
+        model.addAttribute(attribute.getTransaksiKeluar(), transaksiKeluarService.getDashboard());
+        model.addAttribute(attribute.getTransaksiMasuk(), transaksiMasukService.getDashboard());
+        model.addAttribute(attribute.getSawTransaksiKeluar(), transaksiKeluarService.saw());
+        model.addAttribute(attribute.getSawTransaksiMasuk(), transaksiMasukService.saw());
+        model.addAttribute(attribute.getAnakBuah(), anakBuahService.getDashboard());
+        model.addAttribute(attribute.getModal(), modalService.getDashboard());
+        model.addAttribute(attribute.getPath(), "/dashboard");
+        return "pages/dashboard";
+    }
+
     public String getModalPage(Model model, String cari, Pageable pageable) {
         model.addAttribute(attribute.getModal(), modalService.getModal(cari, pageable));
         model.addAttribute(attribute.getPath(), "/modal");

@@ -269,4 +269,25 @@ public class ModalService {
             e.printStackTrace();
         }
     }
+
+    public Map<String, Object> getDashboard() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Pengguna pengguna = penggunaRepository.findByUsername(auth.getName()).get();
+        boolean isAdmin = pengguna.getRole().equals(Pengguna.Role.ADMIN);
+
+        List<Modal> modalList = isAdmin
+            ? modalRepository.findAll()
+            : modalRepository.findByAnakBuah_Id(pengguna.getAnakBuah().getId());
+
+        return modalList.stream().collect(Collectors.collectingAndThen(
+            Collectors.toList(), list -> {
+                BigDecimal totalModal = list.stream()
+                    .map(Modal::getJumlah)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+                return Map.of(
+                    "totalModal", totalModal
+                );
+            }
+        ));
+    }
 }

@@ -1,5 +1,6 @@
 package rongsokan.indah.services;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,5 +42,11 @@ public class AnakBuahService {
 
     public void deleteAnakBuah(UUID id) {
         anakBuahRepository.deleteById(id);
+    }
+
+    public Map<String, Object> getDashboard() {
+        return Map.of(
+            "totalAnakBuah", anakBuahRepository.count()
+        );
     }
 }

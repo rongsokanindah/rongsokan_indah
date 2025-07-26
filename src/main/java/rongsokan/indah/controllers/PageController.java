@@ -52,8 +52,8 @@ public class PageController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboardPage() {
-        return "pages/dashboard";
+    public String getDashboardPage(Model model) {
+        return pageService.getDashboardPage(model);
     }
 
     @GetMapping("/modal")

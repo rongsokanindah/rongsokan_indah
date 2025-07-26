@@ -135,4 +135,13 @@ public class TextConstant {
 
     private final String address = "Jl. Raya Perjuangan, Kecamatan Kebon Jeruk, Kota Jakarta Barat, DKI Jakarta";
     private final String city = "Jakarta";
+
+    private final String jumlah = "Jumlah";
+    private final String terdaftar = "Terdaftar";
+    private final String barangMasuk = "Barang Masuk";
+    private final String barangKeluar = "Barang Keluar";
+
+    private final String orang = "Orang";
+    private final String sawTransaksiMasuk = "Perhitungan SAW Transaksi Masuk";
+    private final String sawTransaksiKeluar = "Perhitungan SAW Transaksi Keluar";
 }

@@ -1,0 +1,107 @@
+<div class="p-3 content" th:fragment="dashboard">
+    <div class="row">
+        <div class="col">
+            <div class="card border-success shadow h-100">
+                <div class="card-body">
+                    <h6 class="card-title text-success">
+                        <i class="bi bi-box-arrow-in-down"></i>
+                        <span th:text="${@textConstant.barangMasuk}"></span>
+                    </h6>
+
+                    <div class="d-block small">
+                        <small th:text="${@textConstant.totalBeratKg + ' :'}"></small>
+                        <strong th:text="${dataTransaksiMasuk.totalBerat.intValue() + ' Kg'}"></strong>
+                    </div>
+
+                    <div class="d-block small">
+                        <small th:text="${@textConstant.totalHarga + ' :'}"></small>
+                        <strong th:text="${'Rp' + #numbers.formatInteger(dataTransaksiMasuk.totalHarga, 0, 'POINT')}"></strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card border-warning shadow h-100">
+                <div class="card-body">
+                    <h6 class="card-title text-warning">
+                        <i class="bi bi-cash"></i>
+                        <span th:text="${@textConstant.totalModal}"></span>
+                    </h6>
+
+                    <div class="d-block small">
+                        <small th:text="${@textConstant.jumlah + ' :'}"></small>
+                        <strong th:text="${'Rp' + #numbers.formatInteger(dataModal.totalModal, 0, 'POINT')}"></strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <th:block th:if="${pengguna.role.name() == 'ADMIN'}">
+            <div class="col">
+                <div class="card border-info shadow h-100">
+                    <div class="card-body">
+                        <h6 class="card-title text-info">
+                            <i class="bi bi-people"></i>
+                            <span th:text="${@textConstant.anakBuah}"></span>
+                        </h6>
+
+                        <div class="d-block small">
+                            <small th:text="${@textConstant.terdaftar + ' :'}"></small>
+                            <strong th:text="${dataAnakBuah.totalAnakBuah.intValue() + ' ' + @textConstant.orang}"></strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card border-danger shadow h-100">
+                    <div class="card-body">
+                        <h6 class="card-title text-danger">
+                            <i class="bi bi-box-arrow-up"></i>
+                            <span th:text="${@textConstant.barangKeluar}"></span>
+                        </h6>
+
+                        <div class="d-block small">
+                            <small th:text="${@textConstant.totalBeratKg + ' :'}"></small>
+                            <strong th:text="${#numbers.formatInteger(dataTransaksiKeluar.totalBerat, 0, 'POINT') + ' Kg'}"></strong>
+                        </div>
+
+                        <div class="d-block small">
+                            <small th:text="${@textConstant.totalHarga + ' :'}"></small>
+                            <strong th:text="${'Rp' + #numbers.formatInteger(dataTransaksiKeluar.totalHarga, 0, 'POINT')}"></strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col">
+            <div class="card border-black shadow h-100">
+                <div class="card-body">
+                    <h6 class="card-title text-black">
+                        <i class="bi bi-trophy"></i>
+                        <span th:text="${@textConstant.sawTransaksiMasuk}"></span>
+                    </h6>
+                    <canvas id="sawTransaksiMasuk" th:data-value="${@parse.toJSON(sawTransaksiMasuk)}"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <th:block th:if="${pengguna.role.name() == 'ADMIN'}">
+            <div class="col">
+                <div class="card border-black shadow h-100">
+                    <div class="card-body">
+                        <h6 class="card-title text-black">
+                            <i class="bi bi-trophy"></i>
+                            <span th:text="${@textConstant.sawTransaksiKeluar}"></span>
+                        </h6>
+                        <canvas id="sawTransaksiKeluar" th:data-value="${@parse.toJSON(sawTransaksiKeluar)}"></canvas>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+    </div>
+</div>

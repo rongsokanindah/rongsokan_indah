@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -44,6 +45,7 @@ import rongsokan.indah.constants.TextConstant;
 import rongsokan.indah.entities.Barang;
 import rongsokan.indah.entities.Pengguna;
 import rongsokan.indah.entities.TransaksiMasuk;
+import rongsokan.indah.repositories.BarangRepository;
 import rongsokan.indah.repositories.PenggunaRepository;
 import rongsokan.indah.repositories.TransaksiMasukRepository;
 import rongsokan.indah.utils.Dates;
@@ -56,10 +58,13 @@ public class TransaksiMasukService {
     private TextConstant textConstant;
 
     @Autowired
-    private TransaksiMasukRepository transaksiMasukRepository;
+    private BarangRepository barangRepository;
 
     @Autowired
     private PenggunaRepository penggunaRepository;
+
+    @Autowired
+    private TransaksiMasukRepository transaksiMasukRepository;
 
     public TransaksiMasuk saveTransaksiMasuk(TransaksiMasuk transaksiMasuk) {
         return transaksiMasukRepository.save(transaksiMasuk);
@@ -295,5 +300,96 @@ public class TransaksiMasukService {
         } catch (IOException | DocumentException e) {
             e.printStackTrace();
         }
+    }
+
+    public Map<String, Object> getDashboard() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Pengguna pengguna = penggunaRepository.findByUsername(auth.getName()).get();
+        boolean isAdmin = pengguna.getRole().equals(Pengguna.Role.ADMIN);
+
+        List<TransaksiMasuk> transaksiMasukList = isAdmin
+            ? transaksiMasukRepository.findAll()
+            : transaksiMasukRepository.findByAnakBuah_Id(pengguna.getAnakBuah().getId());
+
+        return transaksiMasukList.stream().collect(Collectors.collectingAndThen(
+            Collectors.toList(), list -> {
+                BigDecimal totalBerat = list.stream()
+                    .map(TransaksiMasuk::getBeratKg)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+                BigDecimal totalHarga = list.stream()
+                    .map(TransaksiMasuk::getTotalHarga)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+                return Map.of(
+                    "totalBerat", totalBerat,
+                    "totalHarga", totalHarga
+                );
+            }
+        ));
+    }
+
+    public List<Map<String, Object>> saw() {
+        //1. Group By Barang
+        Map<Barang, List<TransaksiMasuk>> groupBarang = transaksiMasukRepository.findAll()
+            .stream().collect(Collectors.groupingBy(TransaksiMasuk::getBarang));
+
+        //2. Count Value per Barang
+        Map<Barang, Map<String, Double>> valueMap = new HashMap<>();
+        for (Map.Entry<Barang, List<TransaksiMasuk>> entry : groupBarang.entrySet()) {
+            Barang barang = entry.getKey();
+            List<TransaksiMasuk> transaksi = entry.getValue();
+
+            double totalBerat = transaksi.stream()
+                .mapToDouble(t -> t.getBeratKg().doubleValue())
+                .sum();
+
+            double hargaAverage = transaksi.stream()
+                .filter(t -> t.getBeratKg().doubleValue() > 0)
+                .mapToDouble(t -> t.getTotalHarga().doubleValue() / t.getBeratKg().doubleValue())
+                .average().orElse(0);
+
+            int totalTransaksi = transaksi.size();
+
+            Map<String, Double> value = new HashMap<>();
+            value.put("harga", hargaAverage);
+            value.put("volume", totalBerat);
+            value.put("permintaan", (double) totalTransaksi);
+
+            valueMap.put(barang, value);
+        }
+
+        //3. Normalisation
+        double maxHarga = valueMap.values().stream().mapToDouble(m -> m.get("harga")).max().orElse(1);
+        double maxVolume = valueMap.values().stream().mapToDouble(m -> m.get("volume")).max().orElse(1);
+        double maxPermintaan = valueMap.values().stream().mapToDouble(m -> m.get("permintaan")).max().orElse(1);
+
+        //4. Count Score Based On Document
+        double weightHarga = 0.5;
+        double weightVolume = 0.3;
+        double weightPermintaan = 0.2;
+
+        Map<Barang, Double> resultScore = new HashMap<>();
+        for (Map.Entry<Barang, Map<String, Double>> entry : valueMap.entrySet()) {
+            Barang barang = entry.getKey();
+            Map<String, Double> value = entry.getValue();
+
+            double valueHarga = value.get("harga") / maxHarga;
+            double valueVolume = value.get("volume") / maxVolume;
+            double valuePermintaan = value.get("permintaan") / maxPermintaan;
+
+            double skor = (valueHarga * weightHarga) + (valueVolume * weightVolume) + (valuePermintaan * weightPermintaan);
+            resultScore.put(barang, skor);
+        }
+
+        //5. Sort Result Score Based on Score Descending
+        return barangRepository.findAll().stream().map(barang -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("barang", barang.getNamaBarang());
+            map.put("skor", resultScore.getOrDefault(barang, 0.0));
+            return map;
+        }).sorted((a, b) -> {
+            return Double.compare((Double) b.get("skor"), (Double) a.get("skor"));
+        }).collect(Collectors.toList());
     }
 }

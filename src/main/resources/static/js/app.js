@@ -739,6 +739,96 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    //~~~~~ Dashboard ~~~~~~~~~~~~~~~//
+    if (currentUrl === "/dashboard") {
+      //Initilaize Document
+      const sawTransaksiKeluar = document.getElementById("sawTransaksiKeluar");
+      const sawTransaksiMasuk = document.getElementById("sawTransaksiMasuk");
+
+      //Get Data SAW
+      const dataSAWTransaksiKeluar = sawTransaksiKeluar?.dataset.value;
+      const dataSAWTransaksiMasuk = sawTransaksiMasuk?.dataset.value;
+
+      const colorRank = ["#198754FF", "#0D6EFDFF", "#FFC107FF"];
+      const trophyEmoji = ["🥇", "🥈", "🥉"];
+
+      if (!sawTransaksiKeluar) {
+        sawTransaksiMasuk.height = 70;
+      }
+
+      if (dataSAWTransaksiMasuk) {
+        const context = sawTransaksiMasuk.getContext("2d");
+        const dataSAW = JSON.parse(dataSAWTransaksiMasuk);
+        chartSAW(context, dataSAW);
+      }
+
+      if (dataSAWTransaksiKeluar) {
+        const context = sawTransaksiKeluar.getContext("2d");
+        const dataSAW = JSON.parse(dataSAWTransaksiKeluar);
+        chartSAW(context, dataSAW);
+      }
+
+      function chartSAW(context, dataSAW) {
+        const labels = dataSAW.map(item => item.barang);
+        const dataScore = dataSAW.map(item => item.skor);
+
+        new Chart(context, {
+          type: "bar",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                data: dataScore,
+                borderRadius: 10,
+                backgroundColor: dataScore.map((_, i) => colorRank[i] || "#6C757DFF")
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                display: false
+              }
+            },
+            scales: {
+              x: {
+                grid: {
+                  display: false
+                }
+              },
+              y: {
+                max: 1,
+                beginAtZero: true,
+                grid: {
+                  display: false
+                }
+              }
+            }
+          },
+          plugins: [{
+            id: 'trophyLabels',
+            afterDatasetsDraw(chart) {
+              const { ctx } = chart;
+              chart.data.datasets[0].data.forEach((_, index) => {
+                if (index < 3) {
+                  const meta = chart.getDatasetMeta(0);
+                  const bar = meta.data[index];
+                  const { x, y } = bar.tooltipPosition();
+
+                  ctx.save();
+                  ctx.textAlign = "center";
+                  ctx.font = "30px sans-serif";
+                  ctx.fillText(trophyEmoji[index], x, y - 20);
+                  ctx.restore();
+                }
+              });
+            }
+          }]
+        });
+      }
+    }
+
     //~~~~~ Modal ~~~~~~~~~~~~~~~//
     if (currentUrl === "/modal") {
       modal();
