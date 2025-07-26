@@ -94,6 +94,11 @@ main {
     color: #DC3545FF;
 }
 
+.note {
+    font-size: 7.5px;
+    font-weight: 300;
+}
+
 /*~~ LOGIN ~~*/
 .login {
     width: 25%;

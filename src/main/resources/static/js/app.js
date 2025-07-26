@@ -2350,6 +2350,89 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     }
+
+    //~~~~~ Rekapitulasi Laporan ~~~~~~~~~~~~~~~//
+    if (currentUrl === "/rekapitulasi-laporan") {
+      rekapitulasiLaporan();
+      function rekapitulasiLaporan() {
+        //Initialize document
+        const rekapitulasi = document.getElementById("rekapitulasiLaporan");
+        const jenisLaporan = rekapitulasi.querySelector("#jenisLaporan");
+        const buttonSearch = rekapitulasi.querySelector("button[type='search']");
+        const tableData = rekapitulasi.querySelector("table");
+
+        let jenisLaporanValue = null;
+
+        //Jenis Laporan Handle Select Change
+        jenisLaporan.closest(".dropdown").querySelectorAll(".dropdown-menu .dropdown-item").forEach((item) => {
+          if (item.dataset.value == getParam("laporan")) {
+            jenisLaporanValue = item.dataset.value;
+            jenisLaporan.textContent = item.textContent;
+          }
+
+          item.addEventListener("click", (event) => {
+            jenisLaporanValue = event.target.dataset.value;
+            jenisLaporan.textContent = event.target.textContent;
+          });
+        });
+
+        //Reset Search Event
+        buttonSearch.removeEventListener("click", handleSearchClick);
+        buttonSearch.addEventListener("click", handleSearchClick);
+
+        function handleSearchClick() {
+          if (jenisLaporanValue != null) {
+            //Get Content
+            fetch(`/rekapitulasi-laporan?laporan=${jenisLaporanValue}`, {
+              method: "POST",
+              headers: { [csrfHeader]: csrfToken }
+            }).then((response) => {
+              if (response.ok) return response.text();
+            }).then((html) => {
+              content.innerHTML = html;
+
+              addParam("laporan", jenisLaporanValue);
+              rekapitulasiLaporan();
+            });
+          }
+        }
+
+        //Table Data
+        if (tableData) {
+          const value = tableData.dataset.value;
+          const data = JSON.parse(value);
+          let total = 0;
+
+          //Initialize Table Document
+          const totalAll = tableData.parentElement.querySelector("h6");
+          const exportPDF = tableData.parentElement.querySelector(".pdf");
+
+          //Show Total All
+          if (tableData.getAttribute("id") == "dataModal") {
+            data.forEach((data) => total += data.totalModal);
+          } else {
+            data.forEach((data) => total += data.totalHarga);
+          }
+          totalAll.textContent = `${totalAll.textContent} : Rp${total.toLocaleString("ID-id")}`;
+
+          //Export Laporan PDF
+          exportPDF.addEventListener("click", () => {
+            fetch(`/rekapitulasi-laporan?laporan=${jenisLaporanValue}&export=true`, {
+              method: "POST",
+              headers: { [csrfHeader]: csrfToken }
+            }).then((response) => {
+              if (response.ok) return response.blob();
+            }).then((pdf) => {
+              const url = URL.createObjectURL(pdf);
+              const a = document.createElement("a");
+
+              a.href = url;
+              a.click();
+            });
+          });
+        }
+      }
+    }
   }
 });
 

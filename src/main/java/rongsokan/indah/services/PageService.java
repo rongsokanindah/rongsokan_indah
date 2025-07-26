@@ -2,12 +2,14 @@ package rongsokan.indah.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import rongsokan.indah.constants.AttributeConstant;
 import rongsokan.indah.entities.Pengguna;
 import rongsokan.indah.repositories.PenggunaRepository;
@@ -134,5 +136,43 @@ public class PageService {
     public String postTransaksiKeluarPage(Model model, String cari, Pageable pageable) {
         model.addAttribute(attribute.getTransaksiKeluar(), transaksiKeluarService.getTransaksiKeluar(cari, pageable));
         return "fragments/transaksi-keluar::reload";
+    }
+
+    public String getRekapitulasiLaporanPage(Model model, String laporan) {
+        model.addAttribute(attribute.getPath(), "/rekapitulasi-laporan");
+        if (laporan.equals(attribute.getModal())) {
+            model.addAttribute(attribute.getModal(), modalService.getRekapitulasiLaporan());
+        } else if (laporan.equals(attribute.getTransaksiMasuk())) {
+            model.addAttribute(attribute.getTransaksiMasuk(), transaksiMasukService.getRekapitulasiLaporan());
+        } else if (laporan.equals(attribute.getTransaksiKeluar())) {
+            model.addAttribute(attribute.getTransaksiKeluar(), transaksiKeluarService.getRekapitulasiLaporan());
+        }
+        return "pages/dashboard";
+    }
+
+    public Object postRekapitulasiLaporanPage(Model model, HttpServletResponse response, boolean export, String laporan) {
+        if (laporan.equals(attribute.getModal())) {
+            model.addAttribute(attribute.getModal(), modalService.getRekapitulasiLaporan());
+
+            if (export) {
+                modalService.generatePDF(response);
+                return ResponseEntity.ok().build();
+            }
+        } else if (laporan.equals(attribute.getTransaksiMasuk())) {
+            model.addAttribute(attribute.getTransaksiMasuk(), transaksiMasukService.getRekapitulasiLaporan());
+
+            if (export) {
+                transaksiMasukService.generatePDF(response);
+                return ResponseEntity.ok().build();
+            }
+        } else if (laporan.equals(attribute.getTransaksiKeluar())) {
+            model.addAttribute(attribute.getTransaksiKeluar(), transaksiKeluarService.getRekapitulasiLaporan());
+
+            if (export) {
+                transaksiKeluarService.generatePDF(response);
+                return ResponseEntity.ok().build();
+            }
+        }
+        return "fragments/rekapitulasi-laporan::reload";
     }
 }

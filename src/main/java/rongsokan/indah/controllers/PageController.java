@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import rongsokan.indah.services.PageService;
 
 @Controller
@@ -133,5 +134,21 @@ public class PageController {
             @RequestParam(required = false, defaultValue = "") String cari,
             @PageableDefault(size = 5, sort = "tanggal", direction = Direction.DESC) Pageable pageable) {
         return pageService.postTransaksiKeluarPage(model, cari, pageable);
+    }
+
+    @GetMapping("/rekapitulasi-laporan")
+    public String getRekapitulasiLaporanPage(
+            Model model,
+            @RequestParam(required = false, defaultValue = "") String laporan) {
+        return pageService.getRekapitulasiLaporanPage(model, laporan);
+    }
+
+    @PostMapping("/rekapitulasi-laporan")
+    public Object postRekapitulasiLaporanPage(
+            Model model,
+            HttpServletResponse response,
+            @RequestParam(required = false) boolean export,
+            @RequestParam(required = false, defaultValue = "") String laporan) {
+        return pageService.postRekapitulasiLaporanPage(model, response, export, laporan);
     }
 }

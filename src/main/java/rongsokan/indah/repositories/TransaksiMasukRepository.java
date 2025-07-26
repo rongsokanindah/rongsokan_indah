@@ -2,6 +2,7 @@ package rongsokan.indah.repositories;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -14,6 +15,8 @@ import rongsokan.indah.entities.TransaksiMasuk;
 
 @Repository
 public interface TransaksiMasukRepository extends JpaRepository<TransaksiMasuk, UUID> {
+
+    List<TransaksiMasuk> findByAnakBuah_Id(UUID id);
 
     Page<TransaksiMasuk> findByAnakBuah_Id(UUID id, Pageable pageable);
 

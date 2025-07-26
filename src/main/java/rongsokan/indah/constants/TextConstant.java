@@ -119,4 +119,20 @@ public class TextConstant {
     private final String deskripsiTransaksiKeluar = "Daftar semua transaksi keluar yang telah dibuat.";
 
     private final String hargaJual = "Harga Jual";
+
+    private final String dataRekapitulasiLaporan = "Data Rekapitulasi Laporan";
+    private final String deskripsiRekapitulasiLaporanAnakBuah = "Daftar Laporan Modal atau Transaksi Masuk Anda.";
+    private final String deskripsiRekapitulasiLaporanAdmin = "Daftar Laporan Transaksi Masuk, Transaksi Keluar, atau Modal.";
+
+    private final String totalModal = "Total Modal";
+    private final String pilihLaporan = "Pilih Laporan";
+    private final String totalBeratKg = "Total Berat (Kg)";
+    private final String totalHargaJual = "Total Harga Jual";
+
+    private final String total = "Total";
+    private final String exportPDF = "Export PDF";
+    private final String catatanLaporan = "Untuk melihat selengkapnya silahkan export laporan.";
+
+    private final String address = "Jl. Raya Perjuangan, Kecamatan Kebon Jeruk, Kota Jakarta Barat, DKI Jakarta";
+    private final String city = "Jakarta";
 }

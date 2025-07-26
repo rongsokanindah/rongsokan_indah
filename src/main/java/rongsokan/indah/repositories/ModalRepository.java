@@ -2,6 +2,7 @@ package rongsokan.indah.repositories;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -13,6 +14,8 @@ import rongsokan.indah.entities.Modal;
 
 @Repository
 public interface ModalRepository extends JpaRepository<Modal, UUID> {
+
+    List<Modal> findByAnakBuah_Id(UUID id);
 
     Page<Modal> findByAnakBuah_Id(UUID id, Pageable pageable);
 
