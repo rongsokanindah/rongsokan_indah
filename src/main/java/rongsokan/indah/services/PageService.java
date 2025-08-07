@@ -91,6 +91,11 @@ public class PageService {
         model.addAttribute(attribute.getAnakBuah(), anakBuahService.getDashboard());
         model.addAttribute(attribute.getModal(), modalService.getDashboard());
         model.addAttribute(attribute.getPath(), "/dashboard");
+
+
+        model.addAttribute("sawTransaksiMasukFull", transaksiMasukService.sawMatriksLengkap());
+        model.addAttribute("sawTransaksiKeluarFull", transaksiKeluarService.sawMatriksLengkap());
+
         return "pages/dashboard";
     }
 

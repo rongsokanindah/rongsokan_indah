@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -354,5 +355,91 @@ public class TransaksiKeluarService {
         }).sorted((a, b) -> {
             return Double.compare((Double) b.get("skor"), (Double) a.get("skor"));
         }).collect(Collectors.toList());
+    }
+
+
+
+    public Map<String, Object> sawMatriksLengkap() {
+        // 1. Group By Barang
+        Map<Barang, List<TransaksiKeluar>> groupBarang = transaksiKeluarRepository.findAll()
+            .stream().collect(Collectors.groupingBy(TransaksiKeluar::getBarang));
+
+        // 2. Hitung Nilai Asli (Matriks Keputusan)
+        Map<Barang, Map<String, Double>> matriksKeputusan = new LinkedHashMap<>();
+        for (Map.Entry<Barang, List<TransaksiKeluar>> entry : groupBarang.entrySet()) {
+            Barang barang = entry.getKey();
+            List<TransaksiKeluar> transaksi = entry.getValue();
+
+            double totalBerat = transaksi.stream()
+                .mapToDouble(t -> t.getBeratKg().doubleValue()).sum();
+
+            double hargaAverage = transaksi.stream()
+                .filter(t -> t.getBeratKg().doubleValue() > 0)
+                .mapToDouble(t -> t.getHargaJual().doubleValue() / t.getBeratKg().doubleValue())
+                .average().orElse(0);
+
+            int totalTransaksi = transaksi.size();
+
+            Map<String, Double> value = new HashMap<>();
+            value.put("harga", hargaAverage);
+            value.put("volume", totalBerat);
+            value.put("permintaan", (double) totalTransaksi);
+            matriksKeputusan.put(barang, value);
+        }
+
+        // 3. Matriks Normalisasi
+        double maxHarga = matriksKeputusan.values().stream()
+                .mapToDouble(v -> v.getOrDefault("harga", 0.0))
+                .max()
+                .orElse(1);
+
+            double maxVolume = matriksKeputusan.values().stream()
+                .mapToDouble(v -> v.getOrDefault("volume", 0.0))
+                .max()
+                .orElse(1);
+
+            double maxPermintaan = matriksKeputusan.values().stream()
+                .mapToDouble(v -> v.getOrDefault("permintaan", 0.0))
+                .max()
+                .orElse(1);
+
+        Map<Barang, Map<String, Double>> matriksNormalisasi = new LinkedHashMap<>();
+        for (Map.Entry<Barang, Map<String, Double>> entry : matriksKeputusan.entrySet()) {
+            Barang barang = entry.getKey();
+            Map<String, Double> v = entry.getValue();
+
+            Map<String, Double> norm = new HashMap<>();
+            norm.put("harga", v.getOrDefault("harga", 0.0) / maxHarga);
+            norm.put("volume", v.getOrDefault("volume", 0.0) / maxVolume);
+            norm.put("permintaan", v.getOrDefault("permintaan", 0.0) / maxPermintaan);
+
+            matriksNormalisasi.put(barang, norm);
+        }
+
+        // 4. Hitung Skor Akhir
+        double weightHarga = 0.5, weightVolume = 0.3, weightPermintaan = 0.2;
+        Map<Barang, Double> skorAkhir = new HashMap<>();
+        for (Map.Entry<Barang, Map<String, Double>> entry : matriksNormalisasi.entrySet()) {
+            Map<String, Double> n = entry.getValue();
+            double skor = (n.getOrDefault("harga", 0.0) * weightHarga) +
+                              (n.getOrDefault("volume", 0.0) * weightVolume) +
+                              (n.getOrDefault("permintaan", 0.0) * weightPermintaan);
+            skorAkhir.put(entry.getKey(), skor);
+        }
+
+        // 5. Format hasil
+        List<Map<String, Object>> skorList = skorAkhir.entrySet().stream().map(e -> {
+            Map<String, Object> m = new HashMap<>();
+            m.put("barang", e.getKey().getNamaBarang());
+            m.put("skor", e.getValue());
+            return m;
+        }).sorted((a, b) -> Double.compare((Double) b.get("skor"), (Double) a.get("skor"))).toList();
+
+        // 6. Return semua matriks
+        Map<String, Object> hasil = new HashMap<>();
+        hasil.put("keputusan", matriksKeputusan);
+        hasil.put("normalisasi", matriksNormalisasi);
+        hasil.put("skor", skorList);
+        return hasil;
     }
 }
