@@ -151,4 +151,15 @@ public class PageController {
             @RequestParam(required = false, defaultValue = "") String laporan) {
         return pageService.postRekapitulasiLaporanPage(model, response, export, laporan);
     }
+
+
+
+
+
+
+
+    @GetMapping("/perhitungan-saw")
+    public String getPerhitunganSAW(Model model) {
+        return pageService.getPerhitunganSAW(model);
+    }
 }

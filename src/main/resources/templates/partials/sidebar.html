@@ -4,7 +4,7 @@
       <img class="img-fluid bg-white rounded-circle p-2 shadow" th:src="@{/img/logo.png}">
     </div>
 
-    <div class="menu mt-3">
+    <div class="menu mt-1">
       <a class="d-flex text-white px-4 py-2 text-decoration-none" href="/dashboard">
         <i class="bi bi-house-door fs-5"></i>
         <span class="fs-6 mt-1 ms-2 text-nowrap" th:text="${@textConstant.dashboard}"></span>
@@ -42,6 +42,11 @@
       <a class="d-flex text-white px-4 py-2 text-decoration-none" href="/rekapitulasi-laporan">
         <i class="bi bi-file-earmark-text fs-5"></i>
         <span class="fs-6 mt-1 ms-2 text-nowrap" th:text="${@textConstant.rekapitulasiLaporan}"></span>
+      </a>
+
+      <a class="d-flex text-white px-4 py-2 text-decoration-none" href="/perhitungan-saw">
+        <i class="bi bi-trophy fs-5"></i>
+        <span class="fs-6 mt-1 ms-2 text-nowrap" th:text="${@textConstant.perhitunganSAW}"></span>
       </a>
     </div>
 

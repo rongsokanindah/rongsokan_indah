@@ -144,4 +144,12 @@ public class TextConstant {
     private final String orang = "Orang";
     private final String sawTransaksiMasuk = "Perhitungan SAW Transaksi Masuk";
     private final String sawTransaksiKeluar = "Perhitungan SAW Transaksi Keluar";
+
+
+
+
+    private final String perhitunganSAW = "Perhitungan SAW";
+    private final String dataPerhitunganSAW = "Data Perhitungan SAW";
+    private final String deskripsiPerhitunganSAWAnakBuah = "Hasil perhitungan SAW untuk transaksi masuk Anda.";
+    private final String deskripsiPerhitunganSAWAdmin = "Hasil perhitungan SAW untuk seluruh transaksi masuk dan keluar.";
 }

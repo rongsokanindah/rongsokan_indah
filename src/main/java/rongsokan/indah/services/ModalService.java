@@ -130,7 +130,7 @@ public class ModalService {
         List<Map<String, Object>> data = getRekapitulasiLaporan();
 
         try {
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy");
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", new Locale("id", "ID"));
             String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             NumberFormat numberFormat = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
             String[] headerValue = {textConstant.getNo(), textConstant.getNamaAnakBuah(), textConstant.getTotalModal()};
@@ -257,7 +257,7 @@ public class ModalService {
             //Signiture
             Paragraph signitureParagraph = new Paragraph();
             signitureParagraph.setSpacingBefore(20f);
-            signitureParagraph.setAlignment(Element.ALIGN_RIGHT);
+            signitureParagraph.setAlignment(Element.ALIGN_LEFT);
             signitureParagraph.setFont(addressFont);
 
             signitureParagraph.add(textConstant.getCity() + ", " + LocalDate.now().format(dateFormatter));

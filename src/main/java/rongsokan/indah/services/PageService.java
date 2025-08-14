@@ -191,4 +191,19 @@ public class PageService {
         }
         return "fragments/rekapitulasi-laporan::reload";
     }
+
+
+
+
+
+
+
+    public String getPerhitunganSAW(Model model) {
+        model.addAttribute(attribute.getPath(), "/perhitungan-saw");
+
+        model.addAttribute("sawTransaksiMasukFull", transaksiMasukService.sawMatriksLengkap());
+        model.addAttribute("sawTransaksiKeluarFull", transaksiKeluarService.sawMatriksLengkap());
+
+        return "pages/dashboard";
+    }
 }
