@@ -46,6 +46,7 @@ import rongsokan.indah.entities.TransaksiKeluar;
 import rongsokan.indah.repositories.BarangRepository;
 import rongsokan.indah.repositories.TransaksiKeluarRepository;
 import rongsokan.indah.utils.Dates;
+import rongsokan.indah.utils.FooterEvent;
 import rongsokan.indah.utils.Types;
 
 @Service
@@ -121,7 +122,7 @@ public class TransaksiKeluarService {
         List<Map<String, Object>> data = getRekapitulasiLaporan();
 
         try {
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", new Locale("id", "ID"));
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy", new Locale("id", "ID"));
             String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             NumberFormat numberFormat = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
             String[] headerValue = {textConstant.getNo(), textConstant.getNamaBarang(), textConstant.getTotalBeratKg(), textConstant.getTotalHarga()};
@@ -131,7 +132,8 @@ public class TransaksiKeluarService {
 
             //Initialize
             Document document = new Document(PageSize.A4);
-            PdfWriter.getInstance(document, response.getOutputStream());
+            PdfWriter writer = PdfWriter.getInstance(document, response.getOutputStream());
+            writer.setPageEvent(new FooterEvent());
             document.open();
 
             //Header PDF
@@ -260,7 +262,7 @@ public class TransaksiKeluarService {
 
             //Signiture
             Paragraph signitureParagraph = new Paragraph();
-            signitureParagraph.setSpacingBefore(20f);
+            signitureParagraph.setSpacingBefore(50f);
             signitureParagraph.setAlignment(Element.ALIGN_LEFT);
             signitureParagraph.setFont(addressFont);
 
